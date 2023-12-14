@@ -1,0 +1,49 @@
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: postgres
+      GF_SECURITY_ADMIN_PASSWORD: postgres
+      GF_PROVISIONING_PATH: /etc/grafana/provisioning
+    networks:
+      custom_bridge:
+        ipv4_address: 172.20.0.3
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    networks:
+      custom_bridge:
+        ipv4_address: 172.20.0.4
+    volumes:
+      - ./prometheus:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+
+  node_exporter:
+    image: prom/node-exporter
+    container_name: node_exporter
+    pid: "host"
+    networks:
+      custom_bridge:
+        ipv4_address: 172.20.0.5
+    volumes:
+      - "/:/host:ro,rslave"
+    command:
+      - '--path.rootfs=/host'
+    restart: always
+
+volumes:
+  grafana_data:
+
+networks:
+  custom_bridge:
+    external: true

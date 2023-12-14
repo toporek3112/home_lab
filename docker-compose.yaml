@@ -9,4 +9,10 @@ services:
     volumes:
       - ./config:/etc/nginx/conf.d
     restart: always
-    network_mode: bridge
+    networks:
+      custom_bridge:
+        ipv4_address: 172.20.0.2
+
+networks:
+  custom_bridge:
+    external: true
