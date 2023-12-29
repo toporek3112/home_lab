@@ -1,0 +1,21 @@
+# Use an ARM-compatible base image
+FROM arm32v7/openjdk:8-jre-slim
+
+# Set the JMX Exporter version
+ARG EXPORTER_VERSION=0.16.1
+
+# Add a non-root user with specific user ID (3112)
+RUN adduser --system --uid 3112 --group docker_container
+
+# Create /config directory and ensure it's owned by docker_container user
+RUN mkdir /config && chown docker_container:docker_container /config && chmod 755 /config
+
+# Download the JMX Prometheus exporter and set appropriate permissions
+ADD https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_httpserver/${EXPORTER_VERSION}/jmx_prometheus_httpserver-${EXPORTER_VERSION}-jar-with-dependencies.jar /jmx_prometheus_httpserver.jar
+RUN chown docker_container:docker_container /jmx_prometheus_httpserver.jar && chmod 770 /jmx_prometheus_httpserver.jar
+
+# Expose the port the exporter will run on
+EXPOSE 5556
+
+# Switch to docker_container user
+USER docker_container
