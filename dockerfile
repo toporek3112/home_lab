@@ -1,3 +1,10 @@
+#################################################################################################
+# This docker image is used for debuging and testing feel free to install additional tools.     #
+#################################################################################################
+# docker build -t debug-tools .                                                                 #
+# docker run -it --rm --network custom_bridge debug-tools                                       #
+#################################################################################################
+
 # Use OpenJDK 11 JDK base image
 FROM openjdk:11-jdk
 

@@ -1,3 +1,8 @@
+##############################################################################################
+# docker-compose for ingress-nginx (revers proxy)                                            #
+# configuration can be found in the config folder                                            #
+##############################################################################################
+
 version: '3'
 
 services:

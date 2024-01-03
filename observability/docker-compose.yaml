@@ -15,6 +15,7 @@ services:
       - grafana_data:/var/lib/grafana
       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
       - ./grafana/datasources:/etc/grafana/provisioning/datasources
+    restart: unless-stopped
 
   prometheus:
     image: prom/prometheus:latest
@@ -32,6 +33,7 @@ services:
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
+    restart: unless-stopped
 
   exporter_node:
     image: prom/node-exporter
@@ -44,28 +46,41 @@ services:
       - "/:/host:ro,rslave"
     command:
       - '--path.rootfs=/host'
-    restart: always
+    restart: unless-stopped
 
   exporter_jmx:
-    image: local/jmx-exporter:1.11
+    image: bitnami/jmx-exporter:latest
     container_name: exporter_jmx
-    ports:
-      - "5556:5556"
-    volumes:
-      - ./jmx-exporter/jmx-exporter-config.yaml:/config/jmx-exporter-config.yaml
-      - ./jmx-exporter/logging.properties:/config/logging.properties
-    command:
-      - java
-      - -Djava.util.logging.config.file=/config/logging.properties
-      - -jar
-      - /jmx_prometheus_httpserver.jar
-      - '5556'
-      - /config/jmx-exporter-config.yaml
-    environment:
-      - JMX_URL=service:jmx:rmi:///jndi/rmi://kafka1:9099/jmxrmi
     networks:
       custom_bridge:
         ipv4_address: 172.20.0.7
+    ports:
+      - "5556:5556"  # Port for accessing JMX metrics
+    volumes:
+      - ./jmx-exporter/jmx-exporter-config.yaml:/opt/bitnami/jmx-exporter/jmx-exporter-config.yaml
+      - ./jmx-exporter/logging.properties:/opt/bitnami/jmx-exporter/logging.properties
+    environment:
+      JMX_EXPORTER_CONFIG: /opt/bitnami/jmx-exporter/jmx-exporter-config.yaml
+    restart: unless-stopped
+
+  # exporter_jmx:
+  #   image: local/jmx-exporter:1.11
+  #   container_name: exporter_jmx
+  #   networks:
+  #     custom_bridge:
+  #       ipv4_address: 172.20.0.7
+  #   ports:
+  #     - "5556:5556"
+  #   command: >
+  #     /bin/sh -c "
+  #     echo 'Contents of JMX Exporter Configuration File:';
+  #     cat /config/jmx-exporter-config.yaml;
+  #     echo 'Starting JMX Exporter...';
+  #     java -Djava.util.logging.config.file=/config/logging.properties -jar /jmx_prometheus_httpserver.jar '5556' /config/jmx-exporter-config.yaml;
+  #     "
+  #   environment:
+  #     - JMX_URL=service:jmx:rmi:///jndi/rmi://kafka1:9099/jmxrmi
+  #   restart: unless-stopped
 
 volumes:
   grafana_data:
