@@ -24,3 +24,6 @@ docker rm $(docker ps -a -q -f "status=exited")
 # permissions
 chown toporek3112:docker_container prometheus/ && chmod -R 764 prometheus/
 
+# make root filesystem moutyble --> node_exporter
+sudo mount --make-shared /
+sudo systemctl restart docker
