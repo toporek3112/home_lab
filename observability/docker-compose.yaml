@@ -1,4 +1,7 @@
+version: '3'
+
 services:
+  
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -9,8 +12,8 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: postgres
       GF_PROVISIONING_PATH: /etc/grafana/provisioning
     networks:
-      custom_bridge:
-        ipv4_address: 172.20.0.3
+      my_docker_custom_bridge:
+        ipv4_address: 188.20.0.11
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
@@ -21,13 +24,13 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     networks:
-      custom_bridge:
-        ipv4_address: 172.20.0.4
+      my_docker_custom_bridge:
+        ipv4_address: 188.20.0.12
     ports:
       - "9090:9090"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./prometheus/data:/prometheus
+      - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -40,51 +43,19 @@ services:
     container_name: exporter_node
     pid: "host"
     networks:
-      custom_bridge:
-        ipv4_address: 172.20.0.5
+      my_docker_custom_bridge:
+        ipv4_address: 188.20.0.13
     volumes:
       - "/:/host:ro,rslave"
     command:
       - '--path.rootfs=/host'
     restart: unless-stopped
 
-  exporter_jmx:
-    image: bitnami/jmx-exporter:latest
-    container_name: exporter_jmx
-    networks:
-      custom_bridge:
-        ipv4_address: 172.20.0.7
-    ports:
-      - "5556:5556"  # Port for accessing JMX metrics
-    volumes:
-      - ./jmx-exporter/jmx-exporter-config.yaml:/opt/bitnami/jmx-exporter/jmx-exporter-config.yaml
-      - ./jmx-exporter/logging.properties:/opt/bitnami/jmx-exporter/logging.properties
-    environment:
-      JMX_EXPORTER_CONFIG: /opt/bitnami/jmx-exporter/jmx-exporter-config.yaml
-    restart: unless-stopped
-
-  # exporter_jmx:
-  #   image: local/jmx-exporter:1.11
-  #   container_name: exporter_jmx
-  #   networks:
-  #     custom_bridge:
-  #       ipv4_address: 172.20.0.7
-  #   ports:
-  #     - "5556:5556"
-  #   command: >
-  #     /bin/sh -c "
-  #     echo 'Contents of JMX Exporter Configuration File:';
-  #     cat /config/jmx-exporter-config.yaml;
-  #     echo 'Starting JMX Exporter...';
-  #     java -Djava.util.logging.config.file=/config/logging.properties -jar /jmx_prometheus_httpserver.jar '5556' /config/jmx-exporter-config.yaml;
-  #     "
-  #   environment:
-  #     - JMX_URL=service:jmx:rmi:///jndi/rmi://kafka1:9099/jmxrmi
-  #   restart: unless-stopped
-
 volumes:
   grafana_data:
+  prometheus_data:
+  tempo_data:
 
 networks:
-  custom_bridge:
+  my_docker_custom_bridge:
     external: true

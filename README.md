@@ -6,6 +6,10 @@ Some of my local docker setups
 + docker
 + docker-compose
 
+# IP ranges
+Observability: 11-30
+Databases: 31-50
+
 # Setup
 
 Create network cutom_bridge
