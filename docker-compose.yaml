@@ -11,8 +11,13 @@ services:
     container_name: nginx
     ports:
       - "80:80"
+      - "3001:3001"
+    environment:
+      - REACT_APP_BACKEND_URL=http://${HOSTNAME}:3002
     volumes:
-      - ./config:/etc/nginx/conf.d
+      - ./nginx-config:/etc/nginx/conf.d
+      - ./apps/lan_dashboard_build:/usr/share/nginx/html/lan_dashboard:ro
+      # - ./docker-setup/html/app2:/usr/share/nginx/html/app2:ro
     restart: always
     networks:
       custom_bridge:

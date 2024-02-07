@@ -1,0 +1,25 @@
+version: '3'
+services:
+  lan_dashboard_backend:
+    image: 311200/lan_dashboard_backend:latest
+    container_name: lan_dashboard_backend
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=production
+    networks:
+      raspi_docker_custom_bridge:
+        ipv4_address: 188.20.0.51
+    volumes:
+      - ./lan_dashboard_backend:/usr/src/app
+      - /usr/src/app/node_modules
+      - /srv/nfs:/srv/nfs
+    logging:
+      options:
+        mode: non-blocking
+        max-buffer-size: 1m
+    restart: unless-stopped
+
+networks:
+  raspi_docker_custom_bridge:
+    external: true

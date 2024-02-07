@@ -8,7 +8,10 @@ Some of my local docker setups
 
 # IP ranges
 Observability: 11-30
+
 Databases: 31-50
+
+Apps: 51-70
 
 # Setup
 

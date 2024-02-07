@@ -1,3 +1,6 @@
+# run troubleshoot container
+docker run -it --rm --network host debug-tools
+
 # get containers IP
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' grafana
 
@@ -27,3 +30,7 @@ chown toporek3112:docker_container prometheus/ && chmod -R 764 prometheus/
 # make root filesystem moutyble --> node_exporter
 sudo mount --make-shared /
 sudo systemctl restart docker
+
+# create symboliclinks in app folder for frontend and backend
+ln -s ../../lan_dashboard/build lan_dashboard_build
+ln -s ../../lan_dashboard/backend/ lan_dashboard_backend

@@ -12,7 +12,7 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: postgres
       GF_PROVISIONING_PATH: /etc/grafana/provisioning
     networks:
-      my_docker_custom_bridge:
+      raspi_docker_custom_bridge:
         ipv4_address: 188.20.0.11
     volumes:
       - grafana_data:/var/lib/grafana
@@ -24,7 +24,7 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     networks:
-      my_docker_custom_bridge:
+      raspi_docker_custom_bridge:
         ipv4_address: 188.20.0.12
     ports:
       - "9090:9090"
@@ -43,7 +43,7 @@ services:
     container_name: exporter_node
     pid: "host"
     networks:
-      my_docker_custom_bridge:
+      raspi_docker_custom_bridge:
         ipv4_address: 188.20.0.13
     volumes:
       - "/:/host:ro,rslave"
@@ -57,5 +57,5 @@ volumes:
   tempo_data:
 
 networks:
-  my_docker_custom_bridge:
+  raspi_docker_custom_bridge:
     external: true
