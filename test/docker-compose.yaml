@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp" # DHCP, optional
+      - "1080:80/tcp" # Web interface
+    environment:
+      TZ: 'Europe/Vienna' # Adjust to your timezone
+      WEBPASSWORD: 'your_password' # Set a password for the web interface
+    volumes:
+      - pihole_etc:/etc/pihole/
+      - pihole_dnsmasq:/etc/dnsmasq.d/
+    networks:
+      raspi_docker_custom_bridge:
+        ipv4_address: 188.20.0.90
+    restart: unless-stopped
+
+volumes:
+  pihole_etc:
+  pihole_dnsmasq:
+  # smokeping_config:
+  # smokeping_data:
+
+networks:
+  raspi_docker_custom_bridge:
+    external: true
+
+
+  # smokeping:
+  #   container_name: smokeping
+  #   image: linuxserver/smokeping
+  #   ports:
+  #     - "1085:80" # Smokeping web interface
+  #   environment:
+  #     TZ: 'Europe/Vienna' # Adjust to your timezone
+  #     PUID: '1000' # Adjust to your user ID
+  #     PGID: '1000' # Adjust to your group ID
+  #   volumes:
+  #     - smokeping_config:/config
+  #     - smokeping_data:/data
+  #   networks:
+  #     raspi_docker_custom_bridge:
+  #       ipv4_address: 188.20.0.91
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - pihole
