@@ -13,7 +13,7 @@ services:
       - "80:80"
       - "3001:3001"
     environment:
-      - REACT_APP_BACKEND_URL=http://${HOSTNAME}:3002
+      - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
     volumes:
       - ./nginx-config:/etc/nginx/conf.d
       - ./apps/lan_dashboard_build:/usr/share/nginx/html/lan_dashboard:ro

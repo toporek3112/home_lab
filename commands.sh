@@ -34,3 +34,7 @@ sudo systemctl restart docker
 # create symboliclinks in app folder for frontend and backend
 ln -s ../../lan_dashboard/build lan_dashboard_build
 ln -s ../../lan_dashboard/backend/ lan_dashboard_backend
+
+# envs
+export HOST_IP=$(hostname -I | cut -d' ' -f1)
+export REACT_APP_BACKEND_URL=http://${HOST_IP}:3002
