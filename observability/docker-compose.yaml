@@ -51,10 +51,37 @@ services:
       - '--path.rootfs=/host'
     restart: unless-stopped
 
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    networks:
+      raspi_docker_custom_bridge:
+        ipv4_address: 188.20.0.14
+    restart: unless-stopped
+
+  mqtt_exporter:
+    image: sapcc/mosquitto-exporter
+    container_name: mqtt_exporter
+    networks:
+      raspi_docker_custom_bridge:
+        ipv4_address: 188.20.0.15
+    command:
+      - '--endpoint=mosquitto:1883' # Adjust command-line arguments as necessary.
+    restart: unless-stopped
+
 volumes:
   grafana_data:
   prometheus_data:
   tempo_data:
+  mosquitto_data:
+  mosquitto_log:
 
 networks:
   raspi_docker_custom_bridge:
