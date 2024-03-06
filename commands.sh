@@ -30,6 +30,7 @@ chown toporek3112:docker_container prometheus/ && chmod -R 764 prometheus/
 # make root filesystem moutyble --> node_exporter
 sudo mount --make-shared /
 sudo systemctl restart docker
+sudo service docker restart
 
 # create symboliclinks in app folder for frontend and backend
 ln -s ../../lan_dashboard/build lan_dashboard_build
