@@ -20,17 +20,36 @@ services:
       - ./grafana/datasources:/etc/grafana/provisioning/datasources
     restart: unless-stopped
 
-  prometheus:
+  prometheus_import:
     image: prom/prometheus:latest
-    container_name: prometheus
+    container_name: prometheus_import
     networks:
       raspi_docker_custom_bridge:
         ipv4_address: 188.20.0.12
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
+      - ./prometheus/prometheus_import.yml:/etc/prometheus/prometheus.yml
+      - prometheus_import_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-remote-write-receiver' 
+    restart: unless-stopped
+
+  prometheus_export:
+    image: prom/prometheus:latest
+    container_name: prometheus_export
+    networks:
+      raspi_docker_custom_bridge:
+        ipv4_address: 188.20.0.14
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./prometheus/prometheus_export.yml:/etc/prometheus/prometheus.yml
+      - prometheus_export_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -51,9 +70,26 @@ services:
       - '--path.rootfs=/host'
     restart: unless-stopped
 
+  opentelemetry-collector:
+    image: otel/opentelemetry-collector-contrib
+    container_name: opentelemetry_collector
+    networks:
+      raspi_docker_custom_bridge:
+        ipv4_address: 188.20.0.15
+    volumes:
+      - ./otel/otel-collector-config.yml:/etc/otel-collector-config.yml
+    command: ["--config=/etc/otel-collector-config.yml"]
+    ports:
+      - "4317:4317" # gRPC port for receiving metrics
+      - "8889:8888" # HTTP port for pprof, zpages, etc.
+    depends_on:
+      - prometheus_export
+    restart: unless-stopped
+
 volumes:
   grafana_data:
-  prometheus_data:
+  prometheus_import_data:
+  prometheus_export_data:
   tempo_data:
 
 networks:
