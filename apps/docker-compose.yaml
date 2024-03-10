@@ -20,11 +20,12 @@ services:
         max-buffer-size: 1m
     restart: unless-stopped
 
-  esb_backend:
-    image: ./esb_backend
-    container_name: esb_backend
+  esp_backend:
+    build: ./esp_backend
+    container_name: esp_backend
     ports:
-      - "3002:3002"
+      - "5000:5000"
+      - "8000:8000"
     environment:
       - NODE_ENV=production
     networks:

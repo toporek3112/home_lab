@@ -35,6 +35,6 @@ scrape_configs:
     static_configs:
       - targets: ['exporter_jmx:5556']
 
-  - job_name: 'esb-backend'
+  - job_name: 'esp-backend'
     static_configs:
-      - targets: ['esb_backend:8000']
+      - targets: ['esp_backend:8000']

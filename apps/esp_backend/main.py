@@ -1,5 +1,5 @@
 from flask import Flask, request
-from prometheus_client import start_http_server, Gauge, Summary
+from prometheus_client import start_http_server, Gauge
 import random
 import time
 
@@ -8,6 +8,13 @@ app = Flask(__name__)
 # Prometheus metrics with labels for location
 temperature_gauge = Gauge('temperature', 'Temperature of the environment', ['location'])
 humidity_gauge = Gauge('humidity', 'Humidity of the environment', ['location'])
+
+@app.route('/')
+def home():
+    return '''
+    <h1>Welcome to the ESP Backend</h1>
+    <p>Use the /post_metrics endpoint to post temperature and humidity data.</p>
+    '''
 
 @app.route('/post_metrics', methods=['POST'])
 def post_metrics():
