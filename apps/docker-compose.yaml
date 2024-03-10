@@ -20,6 +20,22 @@ services:
         max-buffer-size: 1m
     restart: unless-stopped
 
+  esb_backend:
+    image: ./esb_backend
+    container_name: esb_backend
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=production
+    networks:
+      raspi_docker_custom_bridge:
+        ipv4_address: 188.20.0.52
+    logging:
+      options:
+        mode: non-blocking
+        max-buffer-size: 1m
+    restart: unless-stopped
+
 networks:
   raspi_docker_custom_bridge:
     external: true
