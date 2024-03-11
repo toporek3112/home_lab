@@ -14,6 +14,8 @@ receivers:
 exporters:
   prometheusremotewrite:
     endpoint: "http://188.20.0.12:9090/api/v1/write" # Endpoint for prometheus_import
+    external_labels:
+      source: OpenShiftCluster
   logging:
     loglevel: debug
 
