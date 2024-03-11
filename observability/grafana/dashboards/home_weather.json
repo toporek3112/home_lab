@@ -18,10 +18,20 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 3,
+  "id": 5,
   "links": [],
-  "liveNow": false,
   "panels": [
+    {
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "title": "Weather Basic",
+      "type": "row"
+    },
     {
       "datasource": {
         "type": "prometheus",
@@ -32,32 +42,45 @@
           "color": {
             "mode": "thresholds"
           },
+          "fieldMinMax": false,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "dark-blue",
                 "value": null
               },
               {
+                "color": "blue",
+                "value": 5
+              },
+              {
+                "color": "semi-dark-green",
+                "value": 15
+              },
+              {
+                "color": "yellow",
+                "value": 25
+              },
+              {
                 "color": "red",
-                "value": 80
+                "value": 30
               }
             ]
           },
-          "unit": "celsius",
-          "unitScale": true
+          "unit": "celsius"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 6,
-        "w": 5,
+        "w": 6,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 1,
+      "interval": "10m",
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -70,13 +93,12 @@
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
+        "showPercentChange": true,
+        "text": {},
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.3.3",
-      "repeat": "location",
-      "repeatDirection": "h",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
           "datasource": {
@@ -91,7 +113,7 @@
           "refId": "A"
         }
       ],
-      "title": "Temperatura $location",
+      "title": "Temperatur Mesured $location",
       "type": "stat"
     },
     {
@@ -136,35 +158,124 @@
               "mode": "off"
             }
           },
+          "fieldMinMax": false,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "blue",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
-          "unitScale": true
+          "unit": "celsius"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Humidity"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "unit",
+                "value": "humidity"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Temperature"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "unit",
+                "value": "celsius"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{instance=\"esp_backend:8000\", job=\"esp-backend\", location=\"Balcony\"}"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "30"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Hot"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 11,
-        "w": 19,
-        "x": 5,
-        "y": 0
+        "h": 12,
+        "w": 18,
+        "x": 6,
+        "y": 1
       },
       "id": 3,
+      "interval": "10m",
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "calcs": [
+            "firstNotNull",
+            "lastNotNull",
+            "diff",
+            "mean",
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
@@ -173,19 +284,8 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "10.4.0",
       "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "humidity{location=\"$location\"}",
-          "instant": false,
-          "legendFormat": "Wilgotność",
-          "range": true,
-          "refId": "A"
-        },
         {
           "datasource": {
             "type": "prometheus",
@@ -195,9 +295,21 @@
           "expr": "temperature{location=\"$location\"}",
           "hide": false,
           "instant": false,
-          "legendFormat": "Temperatura",
+          "legendFormat": "Temperature",
           "range": true,
           "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "humidity{location=\"$location\"}",
+          "instant": false,
+          "legendFormat": "Humidity",
+          "range": true,
+          "refId": "A"
         }
       ],
       "title": "Histogram",
@@ -213,6 +325,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "fieldMinMax": false,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -220,25 +333,21 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
-          "unit": "humidity",
-          "unitScale": true
+          "unit": "humidity"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 5,
+        "h": 6,
+        "w": 6,
         "x": 0,
-        "y": 6
+        "y": 7
       },
       "id": 2,
+      "interval": "10m",
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -251,11 +360,12 @@
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
+        "showPercentChange": true,
+        "text": {},
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.3.3",
+      "pluginVersion": "10.4.0",
       "targets": [
         {
           "datasource": {
@@ -270,11 +380,10 @@
           "refId": "A"
         }
       ],
-      "title": "Wilgotność $location",
+      "title": "Humidity Mesured $location",
       "type": "stat"
     }
   ],
-  "refresh": "",
   "schemaVersion": 39,
   "tags": [],
   "templating": {
@@ -283,16 +392,20 @@
         "current": {
           "selected": true,
           "text": [
-            "balcony"
+            "Balcony"
           ],
           "value": [
-            "balcony"
+            "Balcony"
           ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PBFA97CFB590B2093"
         },
         "definition": "label_values(temperature,location)",
         "hide": 0,
         "includeAll": false,
-        "label": "Lokacja",
+        "label": "location",
         "multi": true,
         "name": "location",
         "options": [],
@@ -310,13 +423,13 @@
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-12h",
     "to": "now"
   },
   "timepicker": {},
-  "timezone": "",
-  "title": "Pogoda",
-  "uid": "c7a2c562-503a-4d61-879b-d6972a7e7efa",
-  "version": 2,
+  "timezone": "browser",
+  "title": "Home - Weather",
+  "uid": "edfdghk8tebr4c",
+  "version": 6,
   "weekStart": ""
 }
