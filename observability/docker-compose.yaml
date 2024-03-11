@@ -20,6 +20,25 @@ services:
       - ./grafana/datasources:/etc/grafana/provisioning/datasources
     restart: unless-stopped
 
+  prometheus_export:
+    image: prom/prometheus:latest
+    container_name: prometheus_export
+    networks:
+      raspi_docker_custom_bridge:
+        ipv4_address: 188.20.0.14
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./prometheus/prometheus_export.yml:/etc/prometheus/prometheus.yml
+      - prometheus_export_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--log.level=debug'
+    restart: unless-stopped
+
   prometheus_import:
     image: prom/prometheus:latest
     container_name: prometheus_import
@@ -40,25 +59,6 @@ services:
       - '--log.level=debug'
     restart: unless-stopped
 
-  prometheus_export:
-    image: prom/prometheus:latest
-    container_name: prometheus_export
-    networks:
-      raspi_docker_custom_bridge:
-        ipv4_address: 188.20.0.14
-    ports:
-      - "9091:9090"
-    volumes:
-      - ./prometheus/prometheus_export.yml:/etc/prometheus/prometheus.yml
-      - prometheus_export_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
-      - '--log.level=debug'
-    restart: unless-stopped
-
   exporter_node:
     image: prom/node-exporter
     container_name: exporter_node
@@ -72,18 +72,32 @@ services:
       - '--path.rootfs=/host'
     restart: unless-stopped
 
-  opentelemetry-collector:
+  opentelemetry_collector_export:
     image: otel/opentelemetry-collector-contrib
-    container_name: opentelemetry_collector
+    container_name: opentelemetry_collector_export
     networks:
       raspi_docker_custom_bridge:
         ipv4_address: 188.20.0.15
     volumes:
-      - ./otel/otel-collector-config.yml:/etc/otel-collector-config.yml
+      - ./otel/otel-collector-export.yml:/etc/otel-collector-config.yml
     command: ["--config=/etc/otel-collector-config.yml"]
     ports:
-      - "4317:4317" # gRPC port for receiving metrics
+      - "4318:4317" # gRPC port for receiving metrics
       - "8889:8888" # HTTP port for pprof, zpages, etc.
+    restart: unless-stopped
+
+  opentelemetry_collector_import:
+    image: otel/opentelemetry-collector-contrib
+    container_name: opentelemetry_collector_import
+    networks:
+      raspi_docker_custom_bridge:
+        ipv4_address: 188.20.0.16
+    volumes:
+      - ./otel/otel-collector-import.yml:/etc/otel-collector-config.yml
+    command: ["--config=/etc/otel-collector-config.yml"]
+    ports:
+      - "4319:4317" # gRPC port for receiving metrics
+      - "8887:8888" # HTTP port for pprof, zpages, etc.
     restart: unless-stopped
 
 volumes:
