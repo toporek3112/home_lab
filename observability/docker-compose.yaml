@@ -84,8 +84,6 @@ services:
     ports:
       - "4317:4317" # gRPC port for receiving metrics
       - "8889:8888" # HTTP port for pprof, zpages, etc.
-    depends_on:
-      - prometheus_export
     restart: unless-stopped
 
 volumes:

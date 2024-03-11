@@ -5,11 +5,15 @@ receivers:
         - job_name: 'otel-collector-metrics'
           scrape_interval: 5s
           static_configs:
-            - targets: ['localhost:8888']
+            - targets: ['0.0.0.0:8888']
         - job_name: 'prometheus_export'
           scrape_interval: 5s
           static_configs:
-            - targets: ['188.20.0.14:9090']
+            - targets: ['prometheus_export:9090']
+        - job_name: 'node-exporter'
+          scrape_interval: 5s
+          static_configs:
+            - targets: ['exporter_node:9100']
 
 exporters:
   prometheusremotewrite:
@@ -18,14 +22,14 @@ exporters:
     loglevel: debug
 
 service:
- telemetry:
+  pipelines:
+      metrics:
+        receivers: [prometheus]
+        exporters: [prometheusremotewrite, logging]
+
+  telemetry:
     logs:
       level: "debug"
     metrics:
       address: localhost:8888
       level: detailed
-
-pipelines:
-    metrics:
-      receivers: [prometheus]
-      exporters: [prometheusremotewrite, logging]
