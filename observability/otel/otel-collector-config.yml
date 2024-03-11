@@ -12,12 +12,10 @@ receivers:
             - targets: ['188.20.0.14:9090']
 
 exporters:
-  prometheus:
-    endpoint: "0.0.0.0:9095" # The endpoint where the Prometheus exporter will serve metrics
-    namespace: "exported" # Optional: Prefix for metric names to avoid name clashes
-    const_labels: # Optional: Labels to add to all metrics
-      from: "exported"
-
+  prometheusremotewrite:
+    endpoint: "http://188.20.0.12:9090/api/v1/write" # Endpoint for prometheus_import
+  logging:
+    loglevel: debug
 
 service:
  telemetry:
@@ -26,7 +24,8 @@ service:
     metrics:
       address: localhost:8888
       level: detailed
-  pipelines:
+
+pipelines:
     metrics:
       receivers: [prometheus]
-      exporters: [prometheus]
+      exporters: [prometheusremotewrite, logging]
