@@ -16,7 +16,7 @@ services:
       - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
     volumes:
       - ./nginx-config:/etc/nginx/conf.d
-      - ./apps/lan_dashboard_build:/usr/share/nginx/html/lan_dashboard:ro
+      # - ./apps/lan_dashboard_build:/usr/share/nginx/html/lan_dashboard:ro
       # - ./docker-setup/html/app2:/usr/share/nginx/html/app2:ro
     restart: always
     networks:
