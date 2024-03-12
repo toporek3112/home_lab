@@ -26,6 +26,6 @@ scrape_configs:
     static_configs:
       - targets: ["localhost:9090"]
 
-  # - job_name: "otel-collector"
-  #   static_configs:
-  #     - targets: ["188.20.0.15:9095"]
+  - job_name: "otel-collector-import-metrics-openshift"
+    static_configs:
+      - targets: ["opentelemetry_collector_import:8887"]
