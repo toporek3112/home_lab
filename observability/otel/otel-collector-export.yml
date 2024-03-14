@@ -2,10 +2,10 @@ receivers:
   prometheus:
     config:
       scrape_configs:
-        - job_name: 'prometheus_export'
-          scrape_interval: 5s
-          static_configs:
-            - targets: ['prometheus_export:9090']
+        # - job_name: 'karol-prometheus_export'
+        #   scrape_interval: 5s
+        #   static_configs:
+        #     - targets: ['prometheus_export:9090']
         - job_name: 'node-exporter'
           scrape_interval: 5s
           static_configs:
@@ -13,9 +13,9 @@ receivers:
 
 exporters:
   otlp:
-    endpoint: "opentelemetry_collector_import:4317"
-    tls:
-      insecure: true
+    endpoint: "http://service_url:4317"
+  prometheus:
+    endpoint: '0.0.0.0:8887'
   logging:
     loglevel: debug
 
@@ -23,7 +23,7 @@ service:
   pipelines:
       metrics:
         receivers: [prometheus]
-        exporters: [otlp, logging]
+        exporters: [otlp, prometheus, logging]
 
   telemetry:
     logs:

@@ -12,10 +12,10 @@ receivers:
   
 
 exporters:
-  prometheusremotewrite:
-    endpoint: "http://prometheus_import:9090/api/v1/write" # Endpoint for prometheus_import
-    external_labels:
-      source: OpenShiftCluster
+  # prometheusremotewrite:
+  #   endpoint: "http://prometheus_import:9090/api/v1/write" # Endpoint for prometheus_import
+  #   external_labels:
+  #     source: OpenShiftCluster
   prometheus:
     endpoint: '0.0.0.0:8887'
   logging:
