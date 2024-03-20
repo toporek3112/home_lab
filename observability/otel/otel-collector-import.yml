@@ -1,7 +1,10 @@
 receivers:
-  otlp/metrics-from-openshift:
-    protocols:
-      grpc:
+  otlp/metrics-mein:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
   prometheus/otel-metrics:
     config:
       scrape_configs:
@@ -13,7 +16,7 @@ receivers:
 
 exporters:
   # prometheusremotewrite:
-  #   endpoint: "http://prometheus_import:9090/api/v1/write" # Endpoint for prometheus_import
+  #   endpoint: "http://prometheus_import:9090/api/v1/write"
   #   external_labels:
   #     source: OpenShiftCluster
   prometheus:
@@ -24,7 +27,7 @@ exporters:
 service:
   pipelines:
       metrics:
-        receivers: [otlp/metrics-from-openshift, prometheus/otel-metrics]
+        receivers: [otlp/metrics-mein]
         exporters: [prometheus, logging]
 
   telemetry:

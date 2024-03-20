@@ -2,18 +2,27 @@ receivers:
   prometheus:
     config:
       scrape_configs:
-        # - job_name: 'karol-prometheus_export'
+        # - job_name: 'prometheus_export'
         #   scrape_interval: 5s
         #   static_configs:
         #     - targets: ['prometheus_export:9090']
-        - job_name: 'node-exporter'
-          scrape_interval: 5s
+        - job_name: 'node-exporter-laptop'
+          scrape_interval: 15s
           static_configs:
             - targets: ['exporter_node:9100']
 
 exporters:
-  otlp:
-    endpoint: "http://service_url:4317"
+  otlp/otel-local:
+    endpoint: "http://opentelemetry_collector_import:4317"
+    tls:
+      insecure: true
+  otlp/otel-qa:
+    endpoint: "127.0.0.1:4317"
+    tls:
+      # cert_file: /conf/certs/tls.crt
+      # key_file: /conf/certs/tls.key
+      # ca_file: /conf/certs/ca.crt
+      insecure: true
   prometheus:
     endpoint: '0.0.0.0:8887'
   logging:
@@ -22,12 +31,17 @@ exporters:
 service:
   pipelines:
       metrics:
-        receivers: [prometheus]
-        exporters: [otlp, prometheus, logging]
+        receivers: 
+          - prometheus
+        exporters:
+          # - otlp/otel-local
+          - otlp/otel-qa
+          # - prometheus
+          - logging
 
   telemetry:
     logs:
       level: "debug"
     metrics:
-      address: localhost:8888
+      address: 0.0.0.0:8889
       level: detailed

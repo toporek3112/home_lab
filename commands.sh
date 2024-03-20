@@ -39,3 +39,7 @@ ln -s ../../lan_dashboard/backend/ lan_dashboard_backend
 # envs
 export HOST_IP=$(hostname -I | cut -d' ' -f1)
 export REACT_APP_BACKEND_URL=http://${HOST_IP}:3002
+
+# grep
+docker logs opentelemetry_collector_export 2>&1 | grep -i error
+docker logs opentelemetry_collector_export > delete_me.log 2>&1
