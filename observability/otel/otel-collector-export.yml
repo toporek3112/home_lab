@@ -9,7 +9,7 @@ receivers:
         - job_name: 'node-exporter-laptop'
           scrape_interval: 15s
           static_configs:
-            - targets: ['exporter_node:9100']
+            - targets: ['127.0.0.1:9100']
 
 exporters:
   otlp/otel-local:
