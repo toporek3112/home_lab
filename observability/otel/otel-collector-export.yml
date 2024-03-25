@@ -9,20 +9,20 @@ receivers:
         - job_name: 'node-exporter-laptop'
           scrape_interval: 15s
           static_configs:
-            - targets: ['127.0.0.1:9100']
+            - targets: ['exporter_node:9100']
 
 exporters:
   otlp/otel-local:
     endpoint: "http://opentelemetry_collector_import:4317"
     tls:
       insecure: true
-  otlp/otel-qa:
-    endpoint: "127.0.0.1:4317"
+  otlphttp/otel-qa:
+    endpoint: "https://[ingress-url]"
     tls:
-      # cert_file: /conf/certs/tls.crt
-      # key_file: /conf/certs/tls.key
-      # ca_file: /conf/certs/ca.crt
-      insecure: true
+      cert_file: /conf/certs/tls.crt
+      key_file: /conf/certs/tls.key
+      ca_file: /conf/certs/ca.crt
+      insecure: false
   prometheus:
     endpoint: '0.0.0.0:8887'
   logging:
@@ -35,7 +35,7 @@ service:
           - prometheus
         exporters:
           # - otlp/otel-local
-          - otlp/otel-qa
+          - otlphttp/otel-qa
           # - prometheus
           - logging
 
