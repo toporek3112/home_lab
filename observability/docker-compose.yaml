@@ -101,10 +101,10 @@ services:
   #   #   - "8887:8888" # HTTP port for pprof, zpages, etc.
   #   restart: unless-stopped
 
-volumes:
-  grafana_data:
-  prometheus_import_data:
-  prometheus_export_data:
+# volumes:
+#   grafana_data:
+  # prometheus_import_data:
+  # prometheus_export_data:
 
 networks:
   raspi_docker_custom_bridge:

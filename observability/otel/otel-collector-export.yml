@@ -1,3 +1,9 @@
+extensions:
+  basicauth/client:
+    client_auth: 
+      username: ""
+      password: ""
+
 receivers:
   prometheus:
     config:
@@ -16,28 +22,36 @@ exporters:
     endpoint: "http://opentelemetry_collector_import:4317"
     tls:
       insecure: true
-  otlphttp/otel-qa:
-    endpoint: "https://[ingress-url]"
+  otlp/otel-qa:
+    endpoint: "https://[url]"
     tls:
-      cert_file: /conf/certs/tls.crt
-      key_file: /conf/certs/tls.key
-      ca_file: /conf/certs/ca.crt
+      cert_file: /conf/certs/crm.pem
+      key_file: /conf/certs/crm-chain.pem
       insecure: false
+      insecure_skip_verify: true
+  otlphttp/otel-qa:
+    endpoint: "https://[url]"
+    tls:
+      insecure_skip_verify: true
+      insecure: false
+    auth:
+      authenticator: basicauth/client
   prometheus:
     endpoint: '0.0.0.0:8887'
   logging:
     loglevel: debug
 
 service:
+  extensions: [basicauth/client]
   pipelines:
-      metrics:
-        receivers: 
-          - prometheus
-        exporters:
-          # - otlp/otel-local
-          - otlphttp/otel-qa
-          # - prometheus
-          - logging
+    metrics:
+      receivers: 
+        - prometheus
+      exporters:
+        # - otlp/otel-local
+        - otlphttp/otel-qa
+        # - prometheus
+        - logging
 
   telemetry:
     logs:
