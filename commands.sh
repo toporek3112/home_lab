@@ -39,3 +39,7 @@ ln -s ../../lan_dashboard/backend/ lan_dashboard_backend
 # envs
 export HOST_IP=$(hostname -I | cut -d' ' -f1)
 export REACT_APP_BACKEND_URL=http://${HOST_IP}:3002
+
+# yarn
+
+yarn add @swc/helpers@~0.5.0 react@^18.0.0 react-dom@^18.0.0 rollup@^3.0.0 @grafana/data @grafana/runtime

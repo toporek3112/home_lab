@@ -1,0 +1,67 @@
+{
+  "author": "Grafana Labs",
+  "license": "Apache-2.0",
+  "private": true,
+  "name": "grafana-scenes",
+  "version": "0.15.0",
+  "description": "Grafana framework for building dynamic dashboards",
+  "keywords": [
+    "typescript"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/grafana/scenes.git"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/esm/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "./README.md",
+    "./CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "precommit": "yarn run lint-staged",
+    "prepare": "husky install",
+    "packages:publish": "lerna exec --no-private -- npm publish",
+    "docs": "yarn workspace website run start --port 8080",
+    "docs:build": "yarn workspace website run build",
+    "test:lib": "lerna run test --scope '@grafana/scenes' --",
+    "dev:lib": "lerna run dev --scope '@grafana/scenes' --",
+    "dev:app": "lerna run dev --scope 'scenes-app' --",
+    "test": "lerna run test --scope '@grafana/scenes' -- --watch",
+    "typecheck": "lerna run typecheck"
+  },
+  "resolutions": {
+    "@types/react": "17.0.42"
+  },
+  "packageManager": "yarn@4.1.1",
+  "workspaces": [
+    ".",
+    "packages/*",
+    "docusaurus/website"
+  ],
+  "devDependencies": {
+    "@auto-it/omit-commits": "^11.0.7",
+    "@auto-it/released": "^11.0.7",
+    "@testing-library/react": "^14.1.2",
+    "@types/react": "^17",
+    "@types/react-dom": "^17",
+    "auto": "^11.0.7",
+    "lerna": "^6.5.1",
+    "lint-staged": "^13.2.0"
+  },
+  "dependencies": {
+    "@grafana/data": "^10.4.1",
+    "@grafana/runtime": "^10.4.1",
+    "@swc/helpers": "~0.5.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "rollup": "^3.0.0"
+  }
+}

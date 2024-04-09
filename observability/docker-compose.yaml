@@ -3,7 +3,7 @@ version: '3'
 services:
   
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:${GRAFANA_VERSION}
     container_name: grafana
     ports:
       - "3000:3000"
@@ -11,13 +11,15 @@ services:
       GF_SECURITY_ADMIN_USER: postgres
       GF_SECURITY_ADMIN_PASSWORD: postgres
       GF_PROVISIONING_PATH: /etc/grafana/provisioning
+      # GF_INSTALL_PLUGINS: grafana-scenes-app
     networks:
       raspi_docker_custom_bridge:
         ipv4_address: 188.20.0.11
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
-      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana:/etc/grafana/provisioning
+      - ./grafana/custom.ini:/etc/grafana/grafana.ini
+      - ./grafana/plugins/scenes/packages/scenes/dist:/var/lib/grafana/plugins/grafana-scenes-app
     restart: unless-stopped
 
   prometheus:

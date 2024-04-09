@@ -36,5 +36,6 @@ scrape_configs:
       - targets: ['exporter_jmx:5556']
 
   - job_name: 'esp-backend'
+    scrape_interval: '5s'
     static_configs:
       - targets: ['esp_backend:8000']
