@@ -48,8 +48,8 @@ service:
       receivers: 
         - prometheus
       exporters:
-        # - otlp/otel-local
-        - otlphttp/otel-qa
+        - otlp/otel-local
+        # - otlphttp/otel-qa
         # - prometheus
         - logging
 

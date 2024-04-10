@@ -2,62 +2,62 @@ version: '3'
 
 services:
   
-  # grafana:
-  #   image: grafana/grafana:latest
-  #   container_name: grafana
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     GF_SECURITY_ADMIN_USER: postgres
-  #     GF_SECURITY_ADMIN_PASSWORD: postgres
-  #     GF_PROVISIONING_PATH: /etc/grafana/provisioning
-  #   networks:
-  #     raspi_docker_custom_bridge:
-  #       ipv4_address: 188.20.0.11
-  #   volumes:
-  #     - grafana_data:/var/lib/grafana
-  #     - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
-  #     - ./grafana/datasources:/etc/grafana/provisioning/datasources
-  #   restart: unless-stopped
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: postgres
+      GF_SECURITY_ADMIN_PASSWORD: postgres
+      GF_PROVISIONING_PATH: /etc/grafana/provisioning
+    networks:
+      raspi_docker_custom_bridge:
+        ipv4_address: 188.20.0.11
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+    restart: unless-stopped
 
-  # prometheus_export:
-  #   image: prom/prometheus:latest
-  #   container_name: prometheus_export
-  #   networks:
-  #     raspi_docker_custom_bridge:
-  #       ipv4_address: 188.20.0.14
-  #   ports:
-  #     - "9091:9090"
-  #   volumes:
-  #     - ./prometheus/prometheus_export.yml:/etc/prometheus/prometheus.yml
-  #     - prometheus_export_data:/prometheus
-  #   command:
-  #     - '--config.file=/etc/prometheus/prometheus.yml'
-  #     - '--storage.tsdb.path=/prometheus'
-  #     - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-  #     - '--web.console.templates=/usr/share/prometheus/consoles'
-  #     - '--log.level=debug'
-  #   restart: unless-stopped
+  prometheus_export:
+    image: prom/prometheus:latest
+    container_name: prometheus_export
+    networks:
+      raspi_docker_custom_bridge:
+        ipv4_address: 188.20.0.14
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./prometheus/prometheus_export.yml:/etc/prometheus/prometheus.yml
+      - prometheus_export_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--log.level=debug'
+    restart: unless-stopped
 
-  # prometheus_import:
-  #   image: prom/prometheus:latest
-  #   container_name: prometheus_import
-  #   networks:
-  #     raspi_docker_custom_bridge:
-  #       ipv4_address: 188.20.0.12
-  #   ports:
-  #     - "9090:9090"
-  #   volumes:
-  #     - ./prometheus/prometheus_import.yml:/etc/prometheus/prometheus.yml
-  #     - prometheus_import_data:/prometheus
-  #   command:
-  #     - '--config.file=/etc/prometheus/prometheus.yml'
-  #     - '--storage.tsdb.path=/prometheus'
-  #     - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-  #     - '--web.console.templates=/usr/share/prometheus/consoles'
-  #     - '--web.enable-remote-write-receiver' 
-  #     - '--log.level=debug'
-  #   restart: unless-stopped
+  prometheus_import:
+    image: prom/prometheus:latest
+    container_name: prometheus_import
+    networks:
+      raspi_docker_custom_bridge:
+        ipv4_address: 188.20.0.12
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus_import.yml:/etc/prometheus/prometheus.yml
+      - prometheus_import_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-remote-write-receiver' 
+      - '--log.level=debug'
+    restart: unless-stopped
 
   exporter_node:
     image: prom/node-exporter
@@ -87,24 +87,24 @@ services:
     #   - "8889:8888" # HTTP port for pprof, zpages, etc.
     # restart: unless-stopped
 
-  # opentelemetry_collector_import:
-  #   image: otel/opentelemetry-collector-contrib
-  #   container_name: opentelemetry_collector_import
-  #   networks:
-  #     raspi_docker_custom_bridge:
-  #       ipv4_address: 188.20.0.16
-  #   volumes:
-  #     - ./otel/otel-collector-import.yml:/etc/otel-collector-config.yml
-  #   command: ["--config=/etc/otel-collector-config.yml"]
-  #   # ports:
-  #   #   - "4319:4317" # gRPC port for receiving metrics
-  #   #   - "8887:8888" # HTTP port for pprof, zpages, etc.
-  #   restart: unless-stopped
+  opentelemetry_collector_import:
+    image: otel/opentelemetry-collector-contrib
+    container_name: opentelemetry_collector_import
+    networks:
+      raspi_docker_custom_bridge:
+        ipv4_address: 188.20.0.16
+    volumes:
+      - ./otel/otel-collector-import.yml:/etc/otel-collector-config.yml
+    command: ["--config=/etc/otel-collector-config.yml"]
+    # ports:
+    #   - "4319:4317" # gRPC port for receiving metrics
+    #   - "8887:8888" # HTTP port for pprof, zpages, etc.
+    restart: unless-stopped
 
-# volumes:
-#   grafana_data:
-  # prometheus_import_data:
-  # prometheus_export_data:
+volumes:
+  grafana_data:
+  prometheus_import_data:
+  prometheus_export_data:
 
 networks:
   raspi_docker_custom_bridge:

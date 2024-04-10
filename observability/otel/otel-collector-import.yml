@@ -15,10 +15,10 @@ receivers:
   
 
 exporters:
-  # prometheusremotewrite:
-  #   endpoint: "http://prometheus_import:9090/api/v1/write"
-  #   external_labels:
-  #     source: OpenShiftCluster
+  prometheusremotewrite:
+    endpoint: "http://prometheus_import:9090/api/v1/write"
+    external_labels:
+      source: OpenShiftCluster
   prometheus:
     endpoint: '0.0.0.0:8887'
   logging:
@@ -27,12 +27,16 @@ exporters:
 service:
   pipelines:
       metrics:
-        receivers: [otlp/metrics-mein]
-        exporters: [prometheus, logging]
+        receivers: 
+          - otlp/metrics-mein
+        exporters: 
+          # - prometheus 
+          - prometheusremotewrite
+          - logging
 
   telemetry:
     logs:
       level: "debug"
     metrics:
-      address: localhost:8888
+      address: 0.0.0.0:8888
       level: detailed
