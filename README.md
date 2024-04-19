@@ -10,11 +10,11 @@ This repository is used to run and test some docker containers setup by using do
 Network: `188.20.0.0/16` (I know, way to big --> will probably change)
 
 ### IP ranges
-| Folder  | from  | to  |
-|---|---|---|
-| Observability  | 11  | 30  |
-| Databases  | 31  | 50  |
-| Apps  | 51  | 70  |
+| Folder        | from        | to          |
+| ------------- | ----------- | ----------- |
+| Observability | 188.20.0.11 | 188.20.0.30 |
+| Databases     | 188.20.0.31 | 188.20.0.50 |
+| Apps          | 188.20.0.51 | 188.20.0.70 |
 
 # Setup
 In root path:
