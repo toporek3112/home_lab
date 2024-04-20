@@ -1,1 +1,2 @@
 observability/prometheus/data
+*.log
