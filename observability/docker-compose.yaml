@@ -29,7 +29,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/config.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -61,10 +61,27 @@ services:
       - "3100:3100"
     volumes:
       - loki-data:/loki # Persistent storage for log data
-      - ./loki/loki.yaml:/etc/loki/loki-config.yaml # Mount the Loki config from host
+      - ./loki/config.yaml:/etc/loki/loki-config.yaml # Mount the Loki config from host
     command: -config.file=/etc/loki/loki-config.yaml
     environment:
       - LOKI_CONFIG_FILE=/etc/loki/loki-config.yaml
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - /var/log/docker/containers:/var/log/docker/containers:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - ./promtail/config.yml:/etc/promtail/config.yml:ro
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      raspi_docker_custom_bridge:
+        ipv4_address: 188.20.0.15
+    depends_on:
+      - loki
+    restart: unless-stopped
+
 
 volumes:
   grafana_data:
