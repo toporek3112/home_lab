@@ -29,3 +29,5 @@ In root path:
 ```{bash}
 docker-compose up -d
 ```
+
+After that follow the readme in the folders. 
