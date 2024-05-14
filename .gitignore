@@ -3,6 +3,9 @@ observability/prometheus/data
 node_modules
 docusaurus
 
+certs
+*.log
+
 # Yarn Berry
 .pnp.*
 .yarn
