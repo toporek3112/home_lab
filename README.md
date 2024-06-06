@@ -22,6 +22,7 @@ Network: `188.20.0.0/16` (I know, way to big --> will probably change)
 | Observability | 188.20.0.11 | 188.20.0.30 |
 | Databases     | 188.20.0.31 | 188.20.0.50 |
 | Apps          | 188.20.0.51 | 188.20.0.70 |
+| Security      | 188.20.0.71 | 188.20.0.90 |
 
 # Setup
 In root path:
