@@ -1,5 +1,7 @@
 version: '3'
+
 services:
+
   lan_dashboard_backend:
     image: 311200/lan_dashboard_backend:latest
     container_name: lan_dashboard_backend

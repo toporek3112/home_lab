@@ -6,6 +6,7 @@
 version: '3'
 
 services:
+
   nginx:
     image: nginx:latest
     container_name: nginx
