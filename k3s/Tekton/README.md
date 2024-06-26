@@ -3,7 +3,22 @@ CI/CD
 
 ## Installation
 
-helm repo add eddycharly https://eddycharly.github.io/tekton-helm
-helm install -n tekton-pipelines tekton-dashboard eddycharly/dashboard  
+1. Add repo:
+   ```
+   helm repo add eddycharly https://eddycharly.github.io/tekton-helm
+   ```
 
-kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/release-full.yaml
+2. Install Tekton pipelines:
+   ``` 
+   helm install -n tekton-pipelines tekton-dashboard eddycharly/dashboard  
+   ```
+
+3. (Optionaly) Install Tekton dashboard
+   ```
+   kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/release-full.yaml
+   ```
+
+4. If dasboard install, create ingressRoute:
+   ```
+   kubectl apply -f ingressRoute
+   ``` 
