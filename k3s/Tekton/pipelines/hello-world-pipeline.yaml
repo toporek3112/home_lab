@@ -1,0 +1,10 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: hello-world-pipeline
+  namespace: tekton-pipelines
+spec:
+  tasks:
+    - name: say-hello
+      taskRef:
+        name: hello-world-task

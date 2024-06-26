@@ -1,0 +1,9 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: deploy-kube-prometheus-operator-pipeline
+spec:
+  tasks:
+    - name: deploy
+      taskRef:
+        name: deploy-kube-prometheus-operator

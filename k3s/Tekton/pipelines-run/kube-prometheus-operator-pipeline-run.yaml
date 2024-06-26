@@ -1,0 +1,7 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: deploy-kube-prometheus-operator-pipeline-run
+spec:
+  pipelineRef:
+    name: deploy-kube-prometheus-operator-pipeline
