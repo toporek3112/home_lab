@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: tekton-dashboard-ingress
+  namespace: tekton-pipelines
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`cicd.local`)
+      kind: Rule
+      services:
+        - name: tekton-dashboard
+          port: 9097

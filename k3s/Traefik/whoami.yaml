@@ -41,7 +41,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`traefik.local`)
+    - match: Host(`whoami.local`)
       kind: Rule
       services:
         - name: whoami
