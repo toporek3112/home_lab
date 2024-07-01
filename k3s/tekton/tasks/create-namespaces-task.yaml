@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: create-namespaces
+  namespace: default
+spec:
+  params:
+    - name: namespaces
+      type: string
+      description: "Comma-separated list of namespaces to create"
+  steps:
+    - name: create-namespaces
+      image: bitnami/kubectl:latest
+      script: |
+        #!/bin/sh
+        set -e
+        echo "Namespaces to create: $(params.namespaces)"
+        IFS=',' read -r -a namespace_array <<< "$(params.namespaces)"
+        echo "Namespace array: ${namespace_array[@]}"
+        for namespace in "${namespace_array[@]}"; do
+          echo "Processing namespace: $namespace"
+          kubectl get namespace $namespace > /dev/null 2>&1
+          if [ $? -ne 0 ]; then
+            echo "Creating namespace: $namespace"
+            kubectl create namespace $namespace
+          else
+            echo "Namespace $namespace already exists"
+          fi
+        done

@@ -1,0 +1,10 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: create-namespaces-pipeline-run
+spec:
+  pipelineRef:
+    name: create-namespaces-pipeline
+  params:
+    - name: namespaces
+      value: "monitoring,observability"

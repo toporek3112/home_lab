@@ -1,0 +1,16 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: create-namespaces-pipeline
+  namespace: default
+spec:
+  params:
+    - name: namespaces
+      type: string
+  tasks:
+    - name: create-namespaces
+      taskRef:
+        name: create-namespaces
+      params:
+        - name: namespaces
+          value: $(params.namespaces)
