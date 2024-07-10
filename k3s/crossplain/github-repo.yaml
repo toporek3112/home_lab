@@ -1,0 +1,9 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: github_raspi
+  namespace: crossplane-system
+spec:
+  interval: 1m
+  url: https://github.com/toporek3112/raspi_docker
+  branch: main

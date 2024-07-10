@@ -1,6 +1,6 @@
 # traefik-dashboard.yaml
 apiVersion: traefik.containo.us/v1alpha1
-kind: ingress
+kind: IngressRoute
 metadata:
   name: traefik-dashboard
   namespace: kube-system

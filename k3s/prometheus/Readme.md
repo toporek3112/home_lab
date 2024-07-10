@@ -1,13 +1,18 @@
 # Prometheus
 
-Helm chart: prometheus-community/kube-prometheus-stack
+Deployed using Helm chart: [prometheus-community/kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) 
 
-Install:
+| Helm Version | App version |
+| ------------ | ----------- |
+| 61.2.0       | v0.75.0     |
+
+
+Install
 ```
-helm install prometheus prometheus-community/kube-prometheus-stack -f values.yaml --namespace monitoring
+helm isntall --namespace monitoring kube-prometheus prometheus-community/kube-prometheus-stack --version v61.2.0 -f values.yaml 
 ```
 
-Upgrade:
+Upgrade
 ```
-helm upgrade prometheus prometheus-community/kube-prometheus-stack -f values.yaml --namespace monitoring
+helm upgrade --namespace monitoring kube-prometheus prometheus-community/kube-prometheus-stack --version v61.2.0 -f values.yaml 
 ```
