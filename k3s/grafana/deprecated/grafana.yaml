@@ -15,3 +15,5 @@ spec:
     security:
       admin_user: postgres
       admin_password: postgres
+    # database:
+    #   url: ""

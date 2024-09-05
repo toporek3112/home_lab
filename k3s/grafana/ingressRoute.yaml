@@ -10,5 +10,5 @@ spec:
     - match: Host(`grafana.local`)
       kind: Rule
       services:
-        - name: grafana-service
+        - name: grafana-operator-grafana-service
           port: 3000

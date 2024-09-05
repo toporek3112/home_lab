@@ -1,0 +1,152 @@
+global:
+  compatibility:
+    openshift:
+      adaptSecurityContext: disabled
+
+clusterDomain: cluster.local
+
+operator:
+  enabled: true
+  replicaCount: 1
+  namespaceScope: false
+  watchNamespace: "monitoring"
+  updateStrategy:
+    type: RollingUpdate
+
+  image:
+    registry: docker.io
+    repository: bitnami/grafana-operator
+    tag: 5.12.0-debian-12-r1
+    digest: ""
+    pullPolicy: IfNotPresent
+  leaderElect: false
+
+  rbac:
+    create: true
+  serviceAccount:
+    create: true
+    automountServiceAccountToken: false
+
+  podSecurityContext:
+    enabled: true
+
+  ## @param operator.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if operator.resources is set (operator.resources is recommended for production).
+  ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
+  ##
+  resourcesPreset: "small"
+  containerPorts:
+    metrics: 8080
+    health: 8081
+
+  automountServiceAccountToken: true
+  ## @param operator.podAntiAffinityPreset Pod anti-affinity preset. Allowed values: `soft` or `hard`
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+  ##
+  podAntiAffinityPreset: soft
+  ## Node affinity preset
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+  ##
+  nodeAffinityPreset:
+    ## @param operator.nodeAffinityPreset.type Node affinity preset type. Allowed values: `soft` or `hard`
+    ##
+    type: ""
+    ## @param operator.nodeAffinityPreset.key Set nodeAffinity preset key
+    ## E.g.
+    ## key: "kubernetes.io/e2e-az-name"
+    ##
+    key: ""
+    ## @param operator.nodeAffinityPreset.values Set nodeAffinity preset values
+    ## E.g.
+    ## values:
+    ##   - e2e-az1
+    ##   - e2e-az2
+    ##
+    values: []
+  tolerations: []
+  prometheus:
+    serviceMonitor:
+      enabled: true
+      namespace: "monitoring"
+      jobLabel: app.kubernetes.io/name
+      relabelings:
+        - action: replace
+          replacement: local
+          targetLabel: cluster
+      honorLabels: false
+
+  networkPolicy:
+    enabled: false
+
+## @section Grafana parameters
+##
+grafana:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnami/grafana
+    tag: 11.1.4-debian-12-r1
+    digest: ""
+    pullPolicy: IfNotPresent
+
+  ## Grafana containers' resource requests and limits
+  ## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+  ## We usually recommend not to specify default resources and to leave this as a conscious
+  ## choice for the user. This also increases chances charts run on environments with little
+  ## resources, such as Minikube. If you do want to specify resources, uncomment the following
+  ## lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  ## @param grafana.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if grafana.resources is set (grafana.resources is recommended for production).
+  ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
+  ##
+  resourcesPreset: "micro"
+  replicaCount: 1
+  ## @param grafana.podAffinityPreset Pod affinity preset
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+  ## Allowed values: soft, hard
+  ##
+  podAffinityPreset: "soft"
+  ## @param grafana.podAntiAffinityPreset Pod anti-affinity preset
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+  ## Allowed values: soft, hard
+  ##
+  podAntiAffinityPreset: soft
+  ## Ref: https://github.com/grafana-operator/grafana-operator/blob/master/documentation/deploy_grafana.md#configuring-the-service
+  ##
+
+  ingress:
+    enabled: false
+
+  persistence:
+    enabled: false
+
+  config:
+    analytics:
+      check_for_updates: "false"
+
+    database:
+      max_idle_conn: "1"
+      max_open_conn: "30"
+      conn_max_lifetime: "3600"
+      isolation_level: "READ-COMMITTED"
+      ssl_mode: require
+      # log_queries: "true"
+
+    grafana_net:
+      url: https://grafana.net
+
+    log:
+      console_format: "json"
+      mode: "console"
+      level: "debug"
+
+    server:
+      root_url: localhost:3000
+      router_logging: "true"
+
+    security:
+      admin_user: postgres
+      admin_password: postgres
+      disable_gravatar: "false"
+    
+  updateStrategy:
+    type: RollingUpdate
+  

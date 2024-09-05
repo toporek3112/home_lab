@@ -1,8 +1,10 @@
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
 metadata:
-  name: prometheus-datasource
+  name: prometheus
   namespace: monitoring
+  labels:
+    dashboards: "grafana"
 spec:
   datasource:
     name: Prometheus
@@ -10,6 +12,7 @@ spec:
     url: http://prometheus-operated:9090
     access: proxy
     isDefault: true
+  resyncPeriod: 5s
   instanceSelector:
     matchLabels:
-      dashboards: "grafana"
+      app.kubernetes.io/instance: "grafana-operator"
