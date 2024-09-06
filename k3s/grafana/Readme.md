@@ -1,6 +1,6 @@
 # Grafana
 
-## Grafana Operator
+## [Grafana Operator](https://github.com/grafana/grafana-operator)
 
 Make sure the Bitnami repo is present:
 ```

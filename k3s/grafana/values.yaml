@@ -83,8 +83,8 @@ grafana:
   enabled: true
   image:
     registry: docker.io
-    repository: bitnami/grafana
-    tag: 11.1.4-debian-12-r1
+    repository: grafana/grafana
+    tag: 11.2.0
     digest: ""
     pullPolicy: IfNotPresent
 
