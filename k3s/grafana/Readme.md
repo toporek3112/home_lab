@@ -1,5 +1,10 @@
 # Grafana
 
+## Versions Matrix
+|         | Helm Chart                                                                             | Grafana Operator    | Grafana |
+| ------- | -------------------------------------------------------------------------------------- | ------------------- | ------- |
+| Version | [4.6.1](https://github.com/bitnami/charts/tree/grafana-operator/4.6.1/bitnami/grafana) | 5.12.0-debian-12-r1 | 11.2.0  |
+
 ## [Grafana Operator](https://github.com/grafana/grafana-operator)
 
 Make sure the Bitnami repo is present:

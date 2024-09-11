@@ -2,9 +2,10 @@
 
 Deployed using Helm chart: [prometheus-community/kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) 
 
-| Helm Version | App version |
-| ------------ | ----------- |
-| 61.2.0       | v0.75.0     |
+## Version Matrix
+| Helm Version                                                                                                                 | Prometheus Operator | Prometheus |
+| ---------------------------------------------------------------------------------------------------------------------------- | ------------------- | ---------- |
+| [61.2.0](https://github.com/prometheus-community/helm-charts/blob/kube-prometheus-stack-61.2.0/charts/kube-prometheus-stack) | 0.75.0              | 2.53.0     |
 
 
 Install
