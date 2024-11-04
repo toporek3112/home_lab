@@ -41,6 +41,20 @@ resource "helm_release" "argocd" {
   create_namespace = true
 }
 
+resource "null_resource" "password_argocd" {
+  provisioner "local-exec" {
+    command = "kubectl -n argocd get secret argocd-secret -o jsonpath=\"{.data['admin\\.password']}\" | base64 --decode > argocd-login.txt"
+  }
+}
+
+
+# resource "null_resource" "del-argo-pass" {
+#   depends_on = [null_resource.password]
+#   provisioner "local-exec" {
+#     command = "kubectl -n argocd delete secret argocd-secret"
+#   }
+# }
+
 output "argocd_metadata" {
   value = helm_release.argocd.metadata
 }

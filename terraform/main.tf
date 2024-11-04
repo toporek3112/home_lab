@@ -8,17 +8,13 @@ provider "helm" {
   }
 }
 
-locals  {
-  namespace_argocd = "argocd"
-}
-
 resource "kubernetes_namespace" "argocd" {
   metadata {
-    name = local.namespace_argocd
+    name = "argocd"
   }
 }
 
 module "argocd" {
   source = "./modules/argocd"
-  namespace = local.namespace_argocd
+  namespace = kubernetes_namespace.argocd.id
 }
