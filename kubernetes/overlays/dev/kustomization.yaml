@@ -1,5 +1,0 @@
-resources:
-  - ../../base/grafana/ingressRoute.yaml
-
-patchesStrategicMerge:
-  - patches.yaml

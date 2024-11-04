@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: home-lab
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: [ "missingkey=error" ]
+  generators:
+    - git:
+        repoURL: https://github.com/toporek3112/home_lab.git
+        revision: 12-setup-argocd-with-terraform
+        directories:
+          - path: applications/*/*/dev
+        values:
+          namespace: '{{index .path.segments 1}}'
+          app_name: '{{index .path.segments 2}}'
+  template:
+    metadata:
+      name: '{{.values.app_name}}'
+      labels:
+        staging: "dev"
+        namespace: "{{.values.namespace}}"
+        app: '{{.values.app_name}}'
+    spec:
+      project: default
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+      source:
+        repoURL: https://github.com/toporek3112/home_lab.git
+        targetRevision: 12-setup-argocd-with-terraform
+        path: '{{.path.path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{.values.namespace}}'
