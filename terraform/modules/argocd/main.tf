@@ -2,6 +2,34 @@ variable "namespace" {
   type = string
 }
 
+resource "kubernetes_manifest" "argocd_ingressroute" {
+  manifest = {
+    "apiVersion" = "traefik.containo.us/v1alpha1"
+    "kind"       = "IngressRoute"
+    "metadata" = {
+      "name"      = "argocd-ingress"
+      "namespace" = var.namespace
+    }
+    "spec" = {
+      "entryPoints" = [
+        "web"
+      ]
+      "routes" = [
+        {
+          "match" = "Host(`argocd.local`)"
+          "kind"  = "Rule"
+          "services" = [
+            {
+              "name" = "argocd-argocd-local"
+              "port" = 80
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+
 resource "helm_release" "argocd" {
   name       = "argocd"
   namespace  = var.namespace
