@@ -20,8 +20,8 @@ resource "kubernetes_manifest" "argocd_ingressroute" {
           "kind"  = "Rule"
           "services" = [
             {
-              "name" = "argocd-argocd-local"
-              "port" = 80
+              "name" = "argocd-server"
+              "port" = 443
             }
           ]
         }
@@ -34,11 +34,9 @@ resource "helm_release" "argocd" {
   name       = "argocd"
   namespace  = var.namespace
   chart      = "argo-cd"
-  repository = "https://argoproj.github.io/argo-helm"
-  version    = "5.30.1" # Adjust to the latest version
+  repository = "https://charts.bitnami.com/bitnami"
+  version    = "7.0.20" # Adjust to the latest version available from the Artifact Hub link
   values     = [file("${path.module}/values.yaml")]
-
-  create_namespace = true
 }
 
 resource "null_resource" "password_argocd" {
@@ -46,6 +44,39 @@ resource "null_resource" "password_argocd" {
     command = "kubectl -n argocd get secret argocd-secret -o jsonpath=\"{.data['admin\\.password']}\" | base64 --decode > argocd-login.txt"
   }
 }
+
+resource "kubernetes_manifest" "argocd_app" {
+  manifest = {
+    "apiVersion" = "argoproj.io/v1alpha1"
+    "kind"       = "Application"
+    "metadata" = {
+      "name"      = "example-app-kustomize"
+      "namespace" = var.namespace
+    }
+    "spec" = {
+      "project" = "default"
+      "source" = {
+        "repoURL"        = "https://github.com/toporek3112/home_lab.git"
+        "targetRevision" = "12-setup-argocd-with-terraform"
+        "path"           = "kubernetes/overlays/dev"
+        "kustomize" = {
+          "namePrefix" = "dev-"
+        }
+      }
+      "destination" = {
+        "server"    = "https://kubernetes.default.svc"
+        "namespace" = "argocd"
+      }
+      "syncPolicy" = {
+        "automated" = {
+          "prune" = true
+          "selfHeal" = true
+        }
+      }
+    }
+  }
+}
+
 
 
 # resource "null_resource" "del-argo-pass" {
