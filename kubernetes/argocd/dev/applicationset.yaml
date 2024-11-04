@@ -4,17 +4,17 @@ metadata:
   name: home-lab
   namespace: argocd
 spec:
-  goTemplate: true
-  goTemplateOptions: [ "missingkey=error" ]
+  # goTemplate: true
+  # goTemplateOptions: ["missingkey=error"]
   generators:
     - git:
         repoURL: https://github.com/toporek3112/home_lab.git
         revision: 12-setup-argocd-with-terraform
         directories:
           - path: applications/*/*/dev
-        values:
-          namespace: '{{index .path.segments 1}}'
-          app_name: '{{index .path.segments 2}}'
+        # values:
+        #   namespace: '{{index .path.segments 1}}'
+        #   app_name: '{{index .path.segments 2}}'
   template:
     metadata:
       name: '{{.values.app_name}}'
