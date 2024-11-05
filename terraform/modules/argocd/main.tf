@@ -1,6 +1,15 @@
 variable "namespace" {
   type = string
 }
+variable "chart" {
+  type = string
+}
+variable "chart_version" {
+  type = string
+}
+variable "repository" {
+  type = string
+}
 
 resource "kubernetes_manifest" "argocd_ingressroute" {
   manifest = {
@@ -33,9 +42,9 @@ resource "kubernetes_manifest" "argocd_ingressroute" {
 resource "helm_release" "argocd" {
   name       = "argocd"
   namespace  = var.namespace
-  chart      = "argo-cd"
-  repository = "https://charts.bitnami.com/bitnami"
-  version    = "7.0.20" # Adjust to the latest version available from the Artifact Hub link
+  chart      = var.chart
+  version    = var.chart_version
+  repository = var.repository
   values     = [file("${path.module}/values.yaml")]
 }
 
