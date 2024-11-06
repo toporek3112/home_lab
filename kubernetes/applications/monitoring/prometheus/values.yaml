@@ -2425,8 +2425,8 @@ prometheus:
     ## statefulset's PVCs are deleted (true) or retained (false) on scaling down
     ## and deleting statefulset, respectively. Requires 1.27.0+.
     ## Ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention
-    persistentVolumeClaimRetentionPolicy: {}
-    #  whenDeleted: Retain
+    persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Retain
     #  whenScaled: Retain
 
     ## If true, pass --storage.tsdb.max-block-duration=2h to prometheus. This is already done if using Thanos
@@ -2817,25 +2817,24 @@ prometheus:
     ## Prometheus StorageSpec for persistent data
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/storage.md
     ##
-    storageSpec: {}
-    ## Using PersistentVolumeClaim
-    ##
-    #  volumeClaimTemplate:
-    #    spec:
-    #      storageClassName: gluster
-    #      accessModes: ["ReadWriteOnce"]
-    #      resources:
-    #        requests:
-    #          storage: 50Gi
-    #    selector: {}
-
-    ## Using tmpfs volume
-    ##
-    #  emptyDir:
-    #    medium: Memory
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 20Gi  # Adjust the size according to your needs
 
     # Additional volumes on the output StatefulSet definition.
-    volumes: []
+    volumes:
+      - name: s3-sse-c-key
+        secret:
+          secretName: thanos-s3-sse-c-key
+      - name: objstore-config
+        secret:
+          secretName: thanos-objstore-secret
 
     # Additional VolumeMounts on the output StatefulSet definition.
     volumeMounts: []
@@ -2975,6 +2974,30 @@ prometheus:
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#thanosspec
     ##
     thanos: {}
+      # image: "bitnami/thanos:0.36.1-debian-12-r2"
+      # baseImage: "bitnami/thanos/thanos"
+      # version: "0.36.1-debian-12-r2"
+      
+      # logLevel: "debug"
+      # logFormat: "json"
+      
+      # additionalArgs:
+      #   - name: "min-time"
+      #     value: "5m"         # The block will be uploaded when it reaches this duration (e.g., 5 minutes)
+        
+      # objectStorageConfigFile: "/conf/objstore.yml"
+      # # objstoreConfig:
+      # #   secret:
+      # #     defaultMode: 420      
+      
+      # volumeMounts:
+      #   - name: s3-sse-c-key
+      #     mountPath: /etc/secrets
+      #   - name: objstore-config
+      #     mountPath: /conf
+
+
+
       # secretProviderClass:
       #   provider: gcp
       #   parameters:
@@ -3776,7 +3799,7 @@ thanosRuler:
 
 ## Setting to true produces cleaner resource names, but requires a data migration because the name of the persistent volume changes. Therefore this should only be set once on initial installation.
 ##
-cleanPrometheusOperatorObjectNames: false
+cleanPrometheusOperatorObjectNames: true
 
 ## Extra manifests to deploy as an array
 extraManifests: []
