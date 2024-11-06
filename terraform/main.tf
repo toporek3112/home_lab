@@ -9,7 +9,7 @@ provider "helm" {
 
 locals {
   git_repo = "https://github.com/toporek3112/home_lab.git"
-  git_branch = "12-setup-argocd-with-terraform"
+  git_branch = "main"
 }
 
 resource "kubernetes_namespace" "argocd" {
@@ -51,11 +51,11 @@ resource "kubernetes_manifest" "applicationset_home_lab" {
           repoURL    = local.git_repo
           revision   = local.git_branch
           directories = [{
-            path = "kubernetes/applications/*/*/dev"
+            path = "kubernetes/*/*/dev"
           }]
           values = {
-            namespace = "{{index .path.segments 2}}"
-            app_name  = "{{index .path.segments 3}}"
+            namespace = "{{index .path.segments 1}}"
+            app_name  = "{{index .path.segments 2}}"
           }
         }
       }]
