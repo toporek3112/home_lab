@@ -1,0 +1,5 @@
+kubeconfig
+*.tfstate
+*.hcl
+*.backup
+terraform/.terraform

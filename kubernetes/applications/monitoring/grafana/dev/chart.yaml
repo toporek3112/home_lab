@@ -1,0 +1,21 @@
+apiVersion: v2
+name: grafana
+description: Home Lab Grafana
+
+type: application
+
+version: 4.7.5
+
+sources:
+  - https://github.com/bitnami/charts/tree/grafana-operator/4.7.5/bitnami/grafana-operator
+
+dependencies:
+  - name: grafana
+    version: 4.7.5
+    repository: oci://registry-1.docker.io/bitnamicharts/grafana-operator
+
+keywords:
+  - monitoring
+  - observability
+  - grafana
+  - operator
