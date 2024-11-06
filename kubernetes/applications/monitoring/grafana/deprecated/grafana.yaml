@@ -10,6 +10,7 @@ spec:
   config:
     log:
       mode: "console"
+      format: "json"
     auth:
       disable_login_form: "false"
     security:

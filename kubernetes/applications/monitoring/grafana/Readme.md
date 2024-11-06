@@ -22,7 +22,7 @@ helm install grafana-operator \
               --version 4.6.1
 
 # vanilla 
-# helm install --namespace monitoring grafana-operator oci://ghcr.io/grafana/helm-charts/grafana-operator -f helm.grafana-operator.yaml --version v5.10.0
+# helm install --namespace monitoring grafana-operator oci://ghcr.io/grafana/helm-charts/grafana-operator -f grafana-operator.yaml --version v5.14.0
 ```
 
 Upgrade:
@@ -34,7 +34,7 @@ helm upgrade grafana-operator \
               --version 4.6.1
 
 # vanilla 
-# helm upgrade --namespace monitoring grafana-operator oci://ghcr.io/grafana/helm-charts/grafana-operator -f helm.grafana-operator.yaml --version v5.10.0
+# helm upgrade --namespace monitoring grafana-operator oci://ghcr.io/grafana/helm-charts/grafana-operator -f grafana-operator.yaml --version v5.14.0
 ```
 
 
