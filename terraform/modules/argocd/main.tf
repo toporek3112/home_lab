@@ -7,7 +7,13 @@ variable "chart" {
 variable "chart_version" {
   type = string
 }
-variable "repository" {
+variable "chart_repository" {
+  type = string
+}
+variable "image_repository" {
+  type = string
+}
+variable "image_tag" {
   type = string
 }
 
@@ -44,8 +50,11 @@ resource "helm_release" "argocd" {
   namespace  = var.namespace
   chart      = var.chart
   version    = var.chart_version
-  repository = var.repository
-  values     = [file("${path.module}/values.yaml")]
+  repository = var.chart_repository
+  values = [templatefile("${path.module}/values.yaml", {
+    image_repository = var.image_repository,
+    image_tag        = var.image_tag,
+  })]
 }
 
 resource "null_resource" "password_argocd" {
@@ -54,39 +63,37 @@ resource "null_resource" "password_argocd" {
   }
 }
 
-resource "kubernetes_manifest" "argocd_app" {
-  manifest = {
-    "apiVersion" = "argoproj.io/v1alpha1"
-    "kind"       = "Application"
-    "metadata" = {
-      "name"      = "example-app-kustomize"
-      "namespace" = var.namespace
-    }
-    "spec" = {
-      "project" = "default"
-      "source" = {
-        "repoURL"        = "https://github.com/toporek3112/home_lab.git"
-        "targetRevision" = "12-setup-argocd-with-terraform"
-        "path"           = "kubernetes/overlays/dev"
-        "kustomize" = {
-          "namePrefix" = "dev-"
-        }
-      }
-      "destination" = {
-        "server"    = "https://kubernetes.default.svc"
-        "namespace" = "argocd"
-      }
-      "syncPolicy" = {
-        "automated" = {
-          "prune" = true
-          "selfHeal" = true
-        }
-      }
-    }
-  }
-}
-
-
+# resource "kubernetes_manifest" "argocd_app" {
+#   manifest = {
+#     "apiVersion" = "argoproj.io/v1alpha1"
+#     "kind"       = "ApplicationSet"
+#     "metadata" = {
+#       "name"      = "home-lab"
+#       "namespace" = var.namespace
+#     }
+#     "spec" = {
+#       "project" = "default"
+#       "source" = {
+#         "repoURL"        = "https://github.com/toporek3112/home_lab.git"
+#         "targetRevision" = "12-setup-argocd-with-terraform"
+#         "path"           = "kubernetes/overlays/dev"
+#         "kustomize" = {
+#           "namePrefix" = "dev-"
+#         }
+#       }
+#       "destination" = {
+#         "server"    = "https://kubernetes.default.svc"
+#         "namespace" = "argocd"
+#       }
+#       "syncPolicy" = {
+#         "automated" = {
+#           "prune"    = true
+#           "selfHeal" = true
+#         }
+#       }
+#     }
+#   }
+# }
 
 # resource "null_resource" "del-argo-pass" {
 #   depends_on = [null_resource.password]
