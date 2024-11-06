@@ -2,7 +2,8 @@ kind: Kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 
 resources:
-  - ingressRoute.yaml  # Including the additional custom resource here
+  - ingressRoute.yaml
+  - ../provisioning/*
 
 helmCharts:
   - name: grafana-operator
