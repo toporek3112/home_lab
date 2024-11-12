@@ -6,6 +6,7 @@ resources:
   - provisioning/datasources.yaml
   - provisioning/folders.yaml
   - provisioning/dashboard.node-exporter.yaml
+  - provisioning/dashboard.argocd.yaml
 
 helmCharts:
   - name: grafana-operator
