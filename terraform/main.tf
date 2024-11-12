@@ -12,6 +12,16 @@ locals {
   git_branch = "main"
 }
 
+# Fetch the manifest content from the specified URL
+data "http" "prometheus_servicemonitor_crd" {
+  url = "https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/tags/kube-prometheus-stack-66.1.1/charts/kube-prometheus-stack/charts/crds/crds/crd-servicemonitors.yaml"
+}
+
+# Apply the manifest in the Kubernetes cluster
+resource "kubernetes_manifest" "prometheus_servicemonitor_crd" {
+  manifest = yamldecode(data.http.prometheus_servicemonitor_crd.body)
+}
+
 resource "kubernetes_namespace" "argocd" {
   metadata {
     name = "argocd"
@@ -21,7 +31,7 @@ resource "kubernetes_namespace" "argocd" {
 # https://github.com/bitnami/charts/tree/argo-cd/7.0.20/bitnami/argo-cd
 # https://github.com/argoproj/argo-helm/tree/argo-cd-7.7.0/charts/argo-cd
 module "argocd" {
-  depends_on = [ kubernetes_namespace.argocd ]
+  depends_on = [ kubernetes_namespace.argocd, kubernetes_manifest.prometheus_servicemonitor_crd ]
   source           = "./modules/argocd"
   namespace        = kubernetes_namespace.argocd.id
   chart            = "argo-cd"
