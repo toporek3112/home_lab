@@ -5,7 +5,8 @@ resources:
   - ingressRoute.yaml
   - provisioning/datasources.yaml
   - provisioning/folders.yaml
-  - provisioning/dashboards.yaml
+  - provisioning/dashboard.node-exporter.yaml
+  - provisioning/dashboard.argocd.yaml
 
 helmCharts:
   - name: grafana-operator
