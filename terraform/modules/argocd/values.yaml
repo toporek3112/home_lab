@@ -837,7 +837,7 @@ controller:
   ## Application controller metrics configuration
   metrics:
     # -- Deploy metrics service
-    enabled: false
+    enabled: true
     # -- Prometheus ServiceMonitor scrapeTimeout. If empty, Prometheus uses the global scrape timeout unless it is less than the target's scrape interval value in which the latter is used.
     scrapeTimeout: ""
     applicationLabels:
@@ -860,7 +860,7 @@ controller:
       portName: http-metrics
     serviceMonitor:
       # -- Enable a prometheus ServiceMonitor
-      enabled: false
+      enabled: true
       # -- Prometheus ServiceMonitor interval
       interval: 30s
       # -- Prometheus [RelabelConfigs] to apply to samples before scraping
@@ -876,7 +876,7 @@ controller:
       # -- Prometheus ServiceMonitor tlsConfig
       tlsConfig: {}
       # -- Prometheus ServiceMonitor namespace
-      namespace: "" # "monitoring"
+      namespace: "monitoring"
       # -- Prometheus ServiceMonitor labels
       additionalLabels: {}
       # -- Prometheus ServiceMonitor annotations
@@ -956,7 +956,7 @@ dex:
       portName: http-metrics
     serviceMonitor:
       # -- Enable a prometheus ServiceMonitor
-      enabled: false
+      enabled: true
       # -- Prometheus ServiceMonitor interval
       interval: 30s
       # -- Prometheus [RelabelConfigs] to apply to samples before scraping
@@ -972,7 +972,7 @@ dex:
       # -- Prometheus ServiceMonitor tlsConfig
       tlsConfig: {}
       # -- Prometheus ServiceMonitor namespace
-      namespace: "" # "monitoring"
+      namespace: "monitoring"
       # -- Prometheus ServiceMonitor labels
       additionalLabels: {}
       # -- Prometheus ServiceMonitor annotations
@@ -1515,7 +1515,7 @@ redis:
 
     serviceMonitor:
       # -- Enable a prometheus ServiceMonitor
-      enabled: false
+      enabled: true
       # -- Interval at which metrics should be scraped
       interval: 30s
       # -- Prometheus [RelabelConfigs] to apply to samples before scraping
@@ -1531,7 +1531,7 @@ redis:
       # -- Prometheus ServiceMonitor tlsConfig
       tlsConfig: {}
       # -- Prometheus ServiceMonitor namespace
-      namespace: "" # "monitoring"
+      namespace: "monitoring"
       # -- Prometheus ServiceMonitor labels
       additionalLabels: {}
       # -- Prometheus ServiceMonitor annotations
@@ -2071,7 +2071,7 @@ server:
       portName: http-metrics
     serviceMonitor:
       # -- Enable a prometheus ServiceMonitor
-      enabled: false
+      enabled: true
       # -- Prometheus ServiceMonitor interval
       interval: 30s
       # -- Prometheus ServiceMonitor scrapeTimeout. If empty, Prometheus uses the global scrape timeout unless it is less than the target's scrape interval value in which the latter is used.
@@ -2089,7 +2089,7 @@ server:
       # -- Prometheus ServiceMonitor tlsConfig
       tlsConfig: {}
       # -- Prometheus ServiceMonitor namespace
-      namespace: ""  # monitoring
+      namespace: "monitoring"
       # -- Prometheus ServiceMonitor labels
       additionalLabels: {}
       # -- Prometheus ServiceMonitor annotations
@@ -2536,7 +2536,7 @@ repoServer:
       portName: http-metrics
     serviceMonitor:
       # -- Enable a prometheus ServiceMonitor
-      enabled: false
+      enabled: true
       # -- Prometheus ServiceMonitor interval
       interval: 30s
       # -- Prometheus ServiceMonitor scrapeTimeout. If empty, Prometheus uses the global scrape timeout unless it is less than the target's scrape interval value in which the latter is used.
@@ -2554,7 +2554,7 @@ repoServer:
       # -- Prometheus ServiceMonitor tlsConfig
       tlsConfig: {}
       # -- Prometheus ServiceMonitor namespace
-      namespace: "" # "monitoring"
+      namespace: "monitoring"
       # -- Prometheus ServiceMonitor labels
       additionalLabels: {}
       # -- Prometheus ServiceMonitor annotations

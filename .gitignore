@@ -1,5 +1,6 @@
 kubeconfig
 *.tfstate
+*.tfstate.lock.info
 *.hcl
 *.backup
 terraform/.terraform
