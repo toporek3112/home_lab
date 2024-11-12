@@ -27,4 +27,3 @@ spec:
   instanceSelector:
     matchLabels:
       app.kubernetes.io/instance: "grafana-operator"
-
