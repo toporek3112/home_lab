@@ -8,6 +8,9 @@ metadata:
 spec:
   folder: operations
   url: "https://raw.githubusercontent.com/rfmoz/grafana-dashboards/master/prometheus/node-exporter-full.json"
+  datasources:
+    - datasourceName: prometheus
+      inputName: prometheus
   resyncPeriod: 5s
   instanceSelector:
     matchLabels:
@@ -23,6 +26,9 @@ metadata:
 spec:
   folder: operations
   url: "https://raw.githubusercontent.com/argoproj/argo-cd/refs/heads/master/examples/dashboard.json"
+  datasources:
+    - datasourceName: prometheus
+      inputName: prometheus
   resyncPeriod: 5s
   instanceSelector:
     matchLabels:
