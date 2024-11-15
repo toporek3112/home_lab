@@ -7,7 +7,7 @@ metadata:
     dashboards: "grafana"
 spec:
   datasource:
-    name: Prometheus
+    name: prometheus
     type: prometheus
     uid: prometheus
     url: http://prometheus-operated:9090
