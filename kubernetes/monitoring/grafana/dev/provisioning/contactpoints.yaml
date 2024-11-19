@@ -1,0 +1,42 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaContactPoint
+metadata:
+  name: cluster-admin
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: "clusterAdmin"
+    app.kubernetes.io/instance: "grafanaContactPoint-clusterAdmin"
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/component: "grafanaContactPoint"
+    app.kubernetes.io/part-of: "observability"
+    app.kubernetes.io/managed-by: "grafana-operator"
+spec:
+  name: cluster-admin
+  disableResolveMessage: true
+  resyncPeriod: 5s
+  type: email
+  uid: contactpoint-clusteradmin
+  settings:
+    addresses: "admin@example.com"
+    singleEmail: true
+    subject: "Alert: {{ .CommonLabels.alertname }}"
+    text: |
+      Alert details:
+
+      {{ range .Alerts }}
+      Alert: {{ .Annotations.summary }}
+      Description: {{ .Annotations.description }}
+      Severity: {{ .Labels.severity }}
+      {{ end }}
+    smtp_smarthost: "smtp.example.com:587"
+    smtp_auth_username: "smtp_user"
+    smtp_require_tls: true
+  secureFields:
+    smtp_auth_password:
+      valueFrom:
+        secretKeyRef:
+          name: smtp-secret
+          key: smtp_auth_password
+  instanceSelector:
+    matchLabels:
+      app.kubernetes.io/instance: "grafana-operator"
