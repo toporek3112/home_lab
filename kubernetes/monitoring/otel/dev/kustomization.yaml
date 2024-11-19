@@ -1,11 +1,8 @@
 kind: Kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 
-# resources:
-#   - ingressRoute.yaml
-#   - provisioning/datasources.yaml
-#   - provisioning/folders.yaml
-#   - provisioning/dashboards.yaml
+resources:
+  - otel-instance.yaml
 
 helmCharts:
   - name: opentelemetry-operator

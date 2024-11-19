@@ -1,0 +1,210 @@
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel
+  namespace: monitoring
+spec:
+  mode: daemonset
+  # args: 
+  #   "feature-gates": "-pkg.translator.prometheus.NormalizeName"
+  
+  observability:
+    metrics:
+      enableMetrics: false
+      disablePrometheusAnnotations: false
+  
+  # tolerations:
+  #   - key: "CriticalAddonsOnly"
+  #     operator: "Equal"
+  #     value: "true"
+  #     effect: "NoExecute"
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+    seccompProfile:
+      type: RuntimeDefault
+    runAsNonRoot: true
+
+  config:
+    extensions:
+      health_check:
+        endpoint: ${MY_POD_IP}:13133
+    
+    receivers:
+      # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/release/v0.104.x/receiver/filelogreceiver
+      filelog:
+        # exclude:
+        # - /var/log/pods/monitoring_otel*_*/opentelemetry-collector/*.log
+        # - /var/log/pods/loki*_loki*_*/*/*.log
+        include:
+        - /var/log/pods/*/*/*.log
+        include_file_name: false
+        include_file_path: true
+        operators:
+        - id: container-parser
+          max_log_size: 102400
+          type: container
+        # - type: filter
+        #   expr: 'body contains "DEBUG" or body contains "Debug" or body contains "debug"' # apply only on PROD systems
+        #   drop_ratio: 0.99 # So that we actually see that something is logging in debug mode in PROD
+        # testing with custom apps
+        # This should never be logged by an app, instead be contained in k8s events
+        retry_on_failure:
+          enabled: true
+        start_at: end
+        max_log_size: 256KiB
+        # storage: file_storage
+
+    processors:
+      transform/k8s_cluster_name:
+        error_mode: ignore
+        log_statements:
+          - context: log
+            statements:
+              - set(attributes["cluster"], "local") where attributes["cluster"] == nil
+              - set(resource.attributes["cluster"], attributes["cluster"])
+              - set(resource.attributes["otel_job"], "logs")
+      k8sattributes:
+        filter:
+          node_from_env_var: K8S_NODE_NAME
+        passthrough: false
+        pod_association:
+        # maybe not smart to do this on infra again, as IPs for pods on remote clusters might exist locally as well
+        # - sources:
+        #   - from: resource_attribute
+        #     name: k8s.pod.ip
+        - sources:
+          - from: resource_attribute
+            name: pod_uid
+        - sources:
+          - from: connection
+        extract:
+          metadata:
+            - "k8s.namespace.name"
+            - "k8s.deployment.name"
+            - "k8s.statefulset.name"
+            - "k8s.daemonset.name"
+            - "k8s.cronjob.name"
+            - "k8s.job.name"
+            - "k8s.node.name"
+            - "k8s.pod.name"
+            - "k8s.pod.uid"
+            - "k8s.pod.start_time"
+            - "container.image.name"
+            - "container.image.tag"
+          # kubectl get deploy -A -o json | jq -r '.items[] | .metadata.name as $name | .metadata.labels | with_entries(select(.key | test("kubectl.kubernetes.io/|deployment.kubernetes.io/") | not)) | to_entries[] | [$name, .key, .value] | @tsv'
+          # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.104.0/processor/k8sattributesprocessor/internal/kube/client.go #TODO
+          labels:
+            - tag_name: argocd.argoproj.io/instance
+              key: argocd.argoproj.io/instance
+              from: pod
+            - tag_name: app.kubernetes.io/managed-by
+              key: app.kubernetes.io/managed-by
+              from: pod
+            - tag_name: app.kubernetes.io/part-of
+              key: app.kubernetes.io/part-of
+              from: pod
+            - tag_name: app.kubernetes.io/name
+              key: app.kubernetes.io/name
+              from: pod
+            - tag_name: app.kubernetes.io/instance
+              key: app.kubernetes.io/instance
+              from: pod
+          annotations:
+            - tag_name: meta.helm.sh/release-name
+              key: meta.helm.sh/release-name
+              from: pod
+      attributes/enrich:
+        actions:
+          - action: insert
+            key: service_name
+            from_attribute: service.name
+          - action: insert
+            key: k8s_service_namespace
+            from_attribute: k8s.namespace.name
+          - action: insert
+            key: service_version
+            from_attribute: service.version
+          - action: insert
+            key: deployment_environment
+            from_attribute: deployment.environment
+      # filter/remove_kube-system_logs:
+      #   error_mode: ignore
+      #   logs:
+      #     log_record:
+      #       - resource.attributes["k8s.namespace.name"]=="kube-system"
+      # filter/remove_argocd_logs:
+      #   error_mode: ignore
+      #   logs:
+      #     exclude:
+      #       match_type: strict
+      #       resource_attributes:
+      #         - key: k8s.namespace.name
+      #           value: argocd
+      attributes/log_file_path:
+        actions:
+          - key: log.file.path
+            action: delete
+      # https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/batchprocessor
+      # Will buffer up to 10000 log records for up to 10 seconds without splitting data items
+      batch:
+        send_batch_max_size: 500 # TODO increase again to 10k
+        send_batch_size: 100 # TODO
+        timeout: 10s
+    
+    exporters:
+      debug:
+        verbosity: detailed
+      # https://github.com/open-telemetry/opentelemetry-collector/blob/main/exporter/otlphttpexporter/README.md
+      # https://grafana.com/docs/loki/latest/send-data/otel/
+      otlphttp/loki:
+        # for logs, "/v1/logs" will be appended.
+        # endpoint: https://loki.dev.at.cloud.inside/otlp
+        endpoint: http://loki-gateway.loki-ng:80/otlp
+        # tls:
+         # insecure: true
+         # insecure_skip_verify: true
+        timeout: 10s
+        # sending_queue:
+        #   enabled: true
+        #   num_consumers: 2
+        #   queue_size: 10
+        retry_on_failure:
+          enabled: true
+          initial_interval: 10s
+          randomization_factor: 0.7
+          multiplier: 1.3
+          max_interval: 60s
+          max_elapsed_time: 30m
+          
+    service:
+      extensions:
+        - health_check
+      pipelines:
+        logs:
+          receivers:
+            - filelog
+            # - otlp
+          processors:
+            # - attributes/add_job_label
+            - k8sattributes
+            # - attributes/enrich
+            # - filter/remove_kube-system_logs
+            # - filter/remove_argocd_logs
+            - transform/k8s_cluster_name
+            - attributes/log_file_path
+            # - resource/k8s_cluster_as_loki_label
+            - batch
+          exporters:
+            - debug
+            # - otlphttp/loki
+            # - loki
+
+      telemetry:
+         logs: 
+           level: debug
+         metrics:
+           level: detailed
+           address: ${MY_POD_IP}:8888
