@@ -1,0 +1,22 @@
+apiVersion: v2
+name: otel-operator
+description: Home Lab Otel
+
+type: application
+
+version: 0.113.0
+
+sources:
+  - https://github.com/open-telemetry/opentelemetry-operator/tree/v0.113.0
+
+dependencies:
+  - name: Otel
+    version: 0.113.0
+    repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+
+keywords:
+  - monitoring
+  - observability
+  - opentelemetry
+  - otel
+  - operator

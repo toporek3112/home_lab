@@ -1,0 +1,79 @@
+nameOverride: otel-operator
+fullnameOverride: otel-operator
+
+manager:
+  image:
+    repository: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator
+    tag: 0.114.0
+  collectorImage:
+    repository: "otel/opentelemetry-collector-contrib"
+    tag: 0.114.0
+  targetAllocatorImage:
+    repository: ghcr.io/open-telemetry/opentelemetry-operator/target-allocator
+    tag: main
+  opampBridgeImage:
+    repository: ""
+    tag: ""
+  
+  leaderElection:
+    enabled: false
+  
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+    seccompProfile:
+      type: RuntimeDefault
+  
+  featureGates: ""
+  
+  ports:
+    metricsPort: 8080
+    webhookPort: 9443
+    healthzPort: 8081
+  
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+  
+  env:
+    ENABLE_WEBHOOKS: "true"
+  
+  serviceMonitor:
+    enabled: true
+    relabelings:
+      - action: replace
+        replacement: local
+        targetLabel: cluster
+  
+  createRbacPermissions: true
+  rolling: true
+
+kubeRBACProxy:
+  enabled: true
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+    seccompProfile:
+      type: RuntimeDefault
+
+admissionWebhooks:
+  create: true
+  certManager:
+    enabled: false
+  autoGenerateCert:
+    enabled: true
+    recreate: true
+    certPeriodDays: 365
+
+crds:
+  create: true
+role:
+  create: true
+clusterRole:
+  create: true
