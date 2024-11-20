@@ -1,0 +1,51 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: kubernetes-pods
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/instance: kube-prometheus
+spec:
+  jobName: 'kubernetes-pods'
+  scrapeInterval: 10s
+  kubernetesSDConfigs:
+    - role: pod
+  honorLabels: true
+  honorTimestamps: true
+  relabelings:
+    - sourceLabels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+      action: keep
+      regex: "true"
+    - sourceLabels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+      action: replace
+      targetLabel: __metrics_path__
+      regex: (.+)
+    - sourceLabels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+      action: replace
+      regex: (.+):(?:\d+);(\d+)
+      replacement: ${1}:${2}
+      targetLabel: __address__
+    - sourceLabels: [__meta_kubernetes_pod_container_port_name]
+      regex: .*(metrics|prometheus).*
+      action: keep
+    - action: labelmap
+      regex: __meta_kubernetes_pod_label_(.+)
+    - sourceLabels: [__meta_kubernetes_namespace]
+      targetLabel: namespace
+    - sourceLabels: [__meta_kubernetes_pod_name]
+      targetLabel: pod
+    - sourceLabels: [__meta_kubernetes_pod_container_name]
+      targetLabel: container
+    - sourceLabels: [__meta_kubernetes_pod_container_port_name]
+      targetLabel: endpoint
+    - sourceLabels: [__meta_kubernetes_service_name]
+      targetLabel: service
+    - sourceLabels: [__meta_kubernetes_pod_node_name]
+      targetLabel: node
+    - replacement: local
+      action: replace
+      targetLabel: cluster
+    - sourceLabels: [app_kubernetes_io_name]
+      regex: otel-collector
+      replacement: otel
+      targetLabel: job
