@@ -4,7 +4,7 @@ metadata:
   name: kubernetes-pods
   namespace: monitoring
   labels:
-    app.kubernetes.io/instance: kube-prometheus
+    app.kubernetes.io/instance: prometheus
 spec:
   jobName: 'kubernetes-pods'
   scrapeInterval: 10s
