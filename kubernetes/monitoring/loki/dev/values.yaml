@@ -21,7 +21,7 @@ loki:
     registry: docker.io
     repository: bitnami/grafana-loki
     tag: 3.3.0-debian-12-r0
-    digest: ""
+    digest: "sha256:6b29c79b65f0305a8413c6b750bd94e7cdb1c842795240a4b4b9173768b81d4c"
     pullPolicy: IfNotPresent
 
   configuration: |
@@ -4379,7 +4379,7 @@ tableManager:
 promtail:
   ## @param promtail.enabled Deploy promtail
   ##
-  enabled: true
+  enabled: false
   ## Bitnami Promtail image
   ## ref: https://hub.docker.com/r/bitnami/grafana-promtail/tags/
   ## @param promtail.image.registry [default: REGISTRY_NAME] Grafana Promtail image registry
