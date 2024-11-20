@@ -8,6 +8,40 @@ spec:
   # args: 
   #   "feature-gates": "-pkg.translator.prometheus.NormalizeName"
   
+  env:
+    - name: MY_POD_IP
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: status.podIP
+    - name: K8S_NODE_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: spec.nodeName
+
+  volumes:
+    - name: varlogpods
+      hostPath:
+        path: /var/log/pods
+        type: ""
+    - name: varlibdockercontainers
+      hostPath:
+        path: /var/lib/docker/containers
+        type: ""
+    - name: varlibotelcol
+      hostPath:
+        path: /var/lib/otelcol
+        type: DirectoryOrCreate
+
+  volumeMounts:
+    - mountPath: /var/log/pods
+      name: varlogpods
+    - mountPath: /var/lib/docker/containers
+      name: varlibdockercontainers
+    - mountPath: /var/lib/otelcol
+      name: varlibotelcol
+
   observability:
     metrics:
       enableMetrics: false
