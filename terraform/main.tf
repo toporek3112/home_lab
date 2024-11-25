@@ -38,7 +38,7 @@ module "argocd" {
   chart_version    = "7.7.0" # Update this to match the latest version of the native chart
   chart_repository = "https://argoproj.github.io/argo-helm"
   image_repository = "311200/argocd"
-  image_tag        = "0.0.6-arm64-2.13.0"
+  image_tag        = "0.0.7-arm64-2.13.0"
 }
 
 ##################################################
