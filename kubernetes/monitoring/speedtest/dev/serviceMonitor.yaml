@@ -1,0 +1,30 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: speedtest
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: "speedtest"
+    app.kubernetes.io/instance: "speedtest"
+    app.kubernetes.io/version: "0.9.14"
+    app.kubernetes.io/component: "speedtest"
+    app.kubernetes.io/part-of: "observability"
+    app.kubernetes.io/managed-by: "argocd"
+spec:
+  endpoints:
+    - port: http
+      path: /probe
+      interval: 5m
+      scrapeTimeout: 3m
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "speedtest"
+      app.kubernetes.io/instance: "speedtest"
+  namespaceSelector:
+    matchNames:
+      - monitoring
+  sampleLimit: 100
+  relabelings:
+    - action: replace
+      replacement: local
+      targetLabel: cluster
