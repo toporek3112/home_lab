@@ -16,6 +16,10 @@ spec:
       path: /probe
       interval: 5m
       scrapeTimeout: 3m
+      relabelings:
+        - action: replace
+          replacement: local
+          targetLabel: cluster
   selector:
     matchLabels:
       app.kubernetes.io/name: "speedtest"
@@ -24,7 +28,3 @@ spec:
     matchNames:
       - monitoring
   sampleLimit: 100
-  relabelings:
-    - action: replace
-      replacement: local
-      targetLabel: cluster
