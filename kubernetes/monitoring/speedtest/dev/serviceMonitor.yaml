@@ -14,7 +14,7 @@ spec:
   endpoints:
     - port: http
       path: /probe
-      interval: 5m
+      interval: 10m
       scrapeTimeout: 3m
       relabelings:
         - action: replace
