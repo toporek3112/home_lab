@@ -8,10 +8,12 @@ spec:
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30080 
+      nodePort: 30080
+      name: http
     - port: 53
       targetPort: 53
       nodePort: 30053
       protocol: UDP
+      name: dns
   selector:
     app: pihole
