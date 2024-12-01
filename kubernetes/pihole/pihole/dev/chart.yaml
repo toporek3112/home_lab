@@ -1,0 +1,20 @@
+apiVersion: v2
+name: pihole
+description: Home Lab PiHole
+
+type: application
+
+version: 2.27.0
+
+sources:
+  - https://chriskirby.net/highly-available-pi-hole-setup-in-kubernetes-with-secure-dns-over-https-doh/
+
+dependencies:
+  - name: pihole
+    version: 2.27.0
+    repository: https://github.com/MoJo2600/pihole-kubernetes?ref=chriskirby.net
+
+keywords:
+  - pihole
+  - addblocker
+  - dns
