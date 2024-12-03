@@ -2644,12 +2644,12 @@ prometheus:
 
     # Additional volumes on the output StatefulSet definition.
     volumes:
-      - name: s3-sse-c-key
-        secret:
-          secretName: thanos-s3-sse-c-key
+      # - name: s3-sse-c-key
+      #   secret:
+      #     secretName: thanos-s3-sse-c-key
       - name: objstore-config
         secret:
-          secretName: thanos-objstore-secret
+          secretName: thanos-objstore-config
 
     # Additional VolumeMounts on the output StatefulSet definition.
     volumeMounts: []
@@ -2798,16 +2798,11 @@ prometheus:
         - name: "shipper.upload-compacted"
           value: ""
         
-      # objectStorageConfigFile: "/conf/objstore.yml"
-      objectStorageConfig:
-        secretName: "thanos-objstore-config"
-        secretKey: "objstore.yml"
-      
-      # volumeMounts:
+      volumeMounts:
+        - name: objstore-config
+          mountPath: /conf
       #   - name: s3-sse-c-key
       #     mountPath: /etc/secrets
-      #   - name: objstore-config
-      #     mountPath: /conf
 
 
 
