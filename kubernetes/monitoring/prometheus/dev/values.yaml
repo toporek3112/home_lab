@@ -2800,8 +2800,8 @@ prometheus:
         
       # objectStorageConfigFile: "/conf/objstore.yml"
       objectStorageConfig:
-        name: thanos-objstore-config
-        key: objstore.yaml
+        secretName: "thanos-objstore-config"
+        secretKey: "objstore.yml"
       
       # volumeMounts:
       #   - name: s3-sse-c-key
