@@ -1,0 +1,263 @@
+operator:
+  enabled: true
+  logFormat: json
+
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 25
+    successThreshold: 1
+
+  podSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    fsGroup: 1001
+
+  resources:
+    limits:
+      memory: 512M
+    requests:
+      cpu: 200m
+      memory: 512M
+
+  serviceMonitor:
+    relabelings:
+      - replacement: local
+        action: replace
+        targetLabel: cluster
+  
+prometheus:
+  enabled: true
+  enableAdminAPI: true
+
+  logFormat: json
+
+  readinessProbe:
+    enabled: true
+    path: /-/ready
+    initialDelaySeconds: 60
+    failureThreshold: 30
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 3
+
+  podSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    fsGroup: 1001
+
+  retention: 2d
+  retentionSize: "10GB"
+  disableCompaction: true
+  enableRemoteWriteReceiver: true
+
+  persistence:
+    enabled: true
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
+
+  serviceMonitor:
+    relabelings:
+      - replacement: local
+        action: replace
+        targetLabel: cluster
+
+  additionalScrapeConfigs:
+    enabled: true
+    type: internal
+    internal:
+      jobList:
+        - job_name: 'kubernetes-pods'
+          kubernetes_sd_configs:
+            - role: pod
+          relabel_configs:
+            - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_scrape ]
+              action: keep
+              regex: "true"
+            - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_path ]
+              action: replace
+              target_label: __metrics_path__
+              regex: (.+)
+            - source_labels: [ __address__, __meta_kubernetes_pod_annotation_prometheus_io_port ]
+              action: replace
+              regex: (.+):(?:\d+);(\d+)
+              replacement: $${1}:$${2}
+              target_label: __address__
+            - action: labelmap
+              regex: __meta_kubernetes_pod_label_(.+)
+            - source_labels: [ __meta_kubernetes_namespace ]
+              action: replace
+              target_label: kubernetes_namespace
+            - source_labels: [ __meta_kubernetes_pod_name ]
+              action: replace
+              target_label: kubernetes_pod_name
+            - replacement: local
+              action: replace
+              target_label: cluster
+        - job_name: 'etcd'
+          scheme: 'https'
+          tls_config:
+            ca_file: /etc/prometheus/secrets/etcd-certs/ca.crt
+            cert_file: /etc/prometheus/secrets/etcd-certs/server.crt
+            key_file: /etc/prometheus/secrets/etcd-certs/server.key
+            insecure_skip_verify: true
+          kubernetes_sd_configs:
+            - role: 'pod'
+              namespaces:
+                names:
+                  - 'kube-system'
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_label_component]
+              action: keep
+              regex: etcd
+            - source_labels: [__address__]
+              action: replace
+              target_label: __address__
+              regex: ([^:]+)(:\d+)?
+              replacement: $1:2379
+            - target_label: __scheme__
+              action: replace
+              replacement: https
+            - source_labels: [__meta_kubernetes_pod_name]
+              action: replace
+              target_label: instance
+            - replacement: local
+              action: replace
+              target_label: cluster
+
+  volumes:
+    - name: etcd-certs
+      secret:
+        secretName: etcd-certs
+        defaultMode: 420
+
+  volumeMounts:
+    - name: etcd-certs
+      mountPath: /etc/prometheus/secrets/etcd-certs
+      readOnly: true
+
+  ## Thanos sidecar container configuration
+  ##
+  thanos:
+    create: true
+
+    extraArgs:
+      - --log.level=info
+      - --log.format=json
+      - --objstore.config-file=/conf/objstore.yml
+
+    objectStorageConfig:
+      secretName: "thanos-objstore-secret"
+      secretKey: "objstore.yml"
+
+alertmanager:
+  enabled: false
+
+exporters:
+  node-exporter:
+    enabled: true
+  kube-state-metrics:
+    enabled: true
+
+kubelet:
+  enabled: true
+  namespace: kube-system
+  serviceMonitor:
+    https: true
+    interval: ""
+    relabelings:
+      - action: replace
+        replacement: local
+        targetLabel: cluster
+    cAdvisorRelabelings:
+      - action: replace
+        replacement: local
+        targetLabel: cluster
+
+rbac:
+  create: true
+  pspEnabled: false
+
+kube-state-metrics:
+  rbac:
+    create: true
+    pspEnabled: false
+  extraArgs:
+    metric-labels-allowlist: deployments=[app.kubernetes.io/part-of],pods=[app.kubernetes.io/part-of],namespaces=[app.kubernetes.io/part-of]
+  serviceMonitor:
+    relabelings:
+      - action: replace
+        replacement: local
+        targetLabel: cluster
+
+node-exporter:
+  global:
+    imageRegistry: tasktrack.telekom.at/remote-docker
+    imagePullSecrets:
+      - tasktrack.telekom.at
+
+  extraArgs:
+    log.format: "json"
+
+  rbac:
+    create: true
+    pspEnabled: false
+
+  serviceAccount:
+    ## @param serviceAccount.create Specify whether to create a ServiceAccount for Node Exporter
+    ##
+    create: true
+
+  tolerations:
+    - effect: NoSchedule
+      operator: Exists
+    - effect: NoExecute
+      operator: Exists
+
+  serviceMonitor:
+    ## @param serviceMonitor.enabled Creates a ServiceMonitor to monitor Node Exporter
+    ##
+    enabled: true
+    relabelings:
+      - action: replace
+        replacement: local
+        targetLabel: cluster
+
+kubeApiServer:
+  serviceMonitor:
+    relabelings:
+      - action: replace
+        replacement: local
+        targetLabel: cluster
+
+coreDns:
+  serviceMonitor:
+    relabelings:
+      - action: replace
+        replacement: local
+        targetLabel: cluster
+
+kubeControllerManager:
+  serviceMonitor:
+    relabelings:
+      - action: replace
+        replacement: local
+        targetLabel: cluster
+
+kubeProxy:
+  serviceMonitor:
+    relabelings:
+      - action: replace
+        replacement: local
+        targetLabel: cluster
+
+kubeScheduler:
+  serviceMonitor:
+    relabelings:
+      - action: replace
+        replacement: local
+        targetLabel: cluster
