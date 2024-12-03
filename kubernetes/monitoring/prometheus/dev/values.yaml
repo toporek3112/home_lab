@@ -2793,11 +2793,11 @@ prometheus:
       
       
       additionalArgs:
-        - name: "--log.level"
+        - name: "log.level"
           value: "info"
-        - name: "--log.format"
+        - name: "log.format"
           value: "json"
-        - name: "--shipper.upload-compacted"
+        - name: "shipper.upload-compacted"
           value: ""
 
         
