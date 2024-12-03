@@ -2790,19 +2790,21 @@ prometheus:
     ##
     thanos:
       image: "bitnami/thanos:0.36.1-debian-12-r2"
-      # baseImage: "bitnami/thanos/thanos"
-      # version: "0.36.1-debian-12-r2"
       
       logLevel: "debug"
       logFormat: "json"
       
       additionalArgs:
-        - name: "shipper.upload-compacted"
+        - --log.level=info
+        - --log.format=json
+        - --shipper.upload-compacted"
+
         
       # objectStorageConfigFile: "/conf/objstore.yml"
-      # # objstoreConfig:
-      # #   secret:
-      # #     defaultMode: 420      
+      objstoreConfig:
+        secret:
+          name: thanos-objstore-config
+          defaultMode: 420      
       
       # volumeMounts:
       #   - name: s3-sse-c-key
