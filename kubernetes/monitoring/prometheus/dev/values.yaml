@@ -2795,9 +2795,9 @@ prometheus:
       logFormat: "json"
       
       additionalArgs:
-        - --log.level=info
-        - --log.format=json
-        - --shipper.upload-compacted"
+        - "--log.level=info"
+        - "--log.format=json"
+        - "--shipper.upload-compacted"
 
         
       # objectStorageConfigFile: "/conf/objstore.yml"
