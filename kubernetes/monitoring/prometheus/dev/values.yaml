@@ -2797,13 +2797,11 @@ prometheus:
       additionalArgs:
         - name: "shipper.upload-compacted"
           value: ""
-
         
       # objectStorageConfigFile: "/conf/objstore.yml"
-      objstoreConfig:
-        secret:
-          name: thanos-objstore-config
-          defaultMode: 420      
+      objectStorageConfig:
+        name: thanos-objstore-config
+        key: objstore.yaml
       
       # volumeMounts:
       #   - name: s3-sse-c-key
