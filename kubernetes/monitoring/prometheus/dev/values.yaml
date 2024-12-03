@@ -2795,7 +2795,8 @@ prometheus:
       logFormat: "json"
       
       additionalArgs:
-        - --shipper.upload-compacted"
+        - name: "shipper.upload-compacted"
+          value: ""
 
         
       # objectStorageConfigFile: "/conf/objstore.yml"
