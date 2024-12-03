@@ -2256,7 +2256,11 @@ prometheus:
 
     ## Allows setting additional arguments for the Prometheus container
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.Prometheus
-    additionalArgs: []
+    additionalArgs:
+      - name: "storage.tsdb.min-block-duration"
+        value: "2h"
+      - name: "storage.tsdb.max-block-duration" 
+        value: "2h"
 
     ## Interval between consecutive scrapes.
     ## Defaults to 30s.
@@ -2784,17 +2788,16 @@ prometheus:
     ## This is experimental and may change significantly without backward compatibility in any release.
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#thanosspec
     ##
-    thanos: {}
-      # image: "bitnami/thanos:0.36.1-debian-12-r2"
+    thanos:
+      image: "bitnami/thanos:0.36.1-debian-12-r2"
       # baseImage: "bitnami/thanos/thanos"
       # version: "0.36.1-debian-12-r2"
       
-      # logLevel: "debug"
-      # logFormat: "json"
+      logLevel: "debug"
+      logFormat: "json"
       
-      # additionalArgs:
-      #   - name: "min-time"
-      #     value: "5m"         # The block will be uploaded when it reaches this duration (e.g., 5 minutes)
+      additionalArgs:
+        - name: "shipper.upload-compacted"
         
       # objectStorageConfigFile: "/conf/objstore.yml"
       # # objstoreConfig:
