@@ -2352,11 +2352,11 @@ prometheus:
 
     ## External labels to add to any time series or alerts when communicating with external systems
     ##
-    externalLabels: {}
+    externalLabels:
+      cluster: "local"
+      prometheus: "prometheus-0"
 
-    ## enable --web.enable-remote-write-receiver flag on prometheus-server
-    ##
-    enableRemoteWriteReceiver: false
+    enableRemoteWriteReceiver: true
 
     ## Name of the external label used to denote replica name
     ##
@@ -2376,251 +2376,21 @@ prometheus:
 
     ## External URL at which Prometheus will be reachable.
     ##
-    externalUrl: ""
+    externalUrl: "prometheus.local"
 
-    ## Define which Nodes the Pods are scheduled on.
-    ## ref: https://kubernetes.io/docs/user-guide/node-selection/
-    ##
-    nodeSelector: {}
-
-    ## Secrets is a list of Secrets in the same namespace as the Prometheus object, which shall be mounted into the Prometheus Pods.
-    ## The Secrets are mounted into /etc/prometheus/secrets/. Secrets changes after initial creation of a Prometheus object are not
-    ## reflected in the running Pods. To change the secrets mounted into the Prometheus Pods, the object must be deleted and recreated
-    ## with the new list of secrets.
-    ##
-    secrets: []
-
-    ## ConfigMaps is a list of ConfigMaps in the same namespace as the Prometheus object, which shall be mounted into the Prometheus Pods.
-    ## The ConfigMaps are mounted into /etc/prometheus/configmaps/.
-    ##
-    configMaps: []
-
-    ## QuerySpec defines the query command line flags when starting Prometheus.
-    ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#queryspec
-    ##
-    query: {}
-
-    ## If nil, select own namespace. Namespaces to be selected for PrometheusRules discovery.
-    ruleNamespaceSelector: {}
-    ## Example which selects PrometheusRules in namespaces with label "prometheus" set to "somelabel"
-    # ruleNamespaceSelector:
-    #   matchLabels:
-    #     prometheus: somelabel
-
-    ## If true, a nil or {} value for prometheus.prometheusSpec.ruleSelector will cause the
-    ## prometheus resource to be created with selectors based on values in the helm deployment,
-    ## which will also match the PrometheusRule resources created
-    ##
     ruleSelectorNilUsesHelmValues: false
-
-    ## PrometheusRules to be selected for target discovery.
-    ## If {}, select all PrometheusRules
-    ##
-    ruleSelector: {}
-    ## Example which select all PrometheusRules resources
-    ## with label "prometheus" with values any of "example-rules" or "example-rules-2"
-    # ruleSelector:
-    #   matchExpressions:
-    #     - key: prometheus
-    #       operator: In
-    #       values:
-    #         - example-rules
-    #         - example-rules-2
-    #
-    ## Example which select all PrometheusRules resources with label "role" set to "example-rules"
-    # ruleSelector:
-    #   matchLabels:
-    #     role: example-rules
-
-    ## If true, a nil or {} value for prometheus.prometheusSpec.serviceMonitorSelector will cause the
-    ## prometheus resource to be created with selectors based on values in the helm deployment,
-    ## which will also match the servicemonitors created
-    ##
     serviceMonitorSelectorNilUsesHelmValues: false
-
-    ## ServiceMonitors to be selected for target discovery.
-    ## If {}, select all ServiceMonitors
-    ##
-    serviceMonitorSelector: {}
-    ## Example which selects ServiceMonitors with label "prometheus" set to "somelabel"
-    # serviceMonitorSelector:
-    #   matchLabels:
-    #     prometheus: somelabel
-
-    ## Namespaces to be selected for ServiceMonitor discovery.
-    ##
-    serviceMonitorNamespaceSelector: {}
-    ## Example which selects ServiceMonitors in namespaces with label "prometheus" set to "somelabel"
-    # serviceMonitorNamespaceSelector:
-    #   matchLabels:
-    #     prometheus: somelabel
-
-    ## If true, a nil or {} value for prometheus.prometheusSpec.podMonitorSelector will cause the
-    ## prometheus resource to be created with selectors based on values in the helm deployment,
-    ## which will also match the podmonitors created
-    ##
     podMonitorSelectorNilUsesHelmValues: false
-
-    ## PodMonitors to be selected for target discovery.
-    ## If {}, select all PodMonitors
-    ##
-    podMonitorSelector: {}
-    ## Example which selects PodMonitors with label "prometheus" set to "somelabel"
-    # podMonitorSelector:
-    #   matchLabels:
-    #     prometheus: somelabel
-
-    ## If nil, select own namespace. Namespaces to be selected for PodMonitor discovery.
-    podMonitorNamespaceSelector: {}
-    ## Example which selects PodMonitor in namespaces with label "prometheus" set to "somelabel"
-    # podMonitorNamespaceSelector:
-    #   matchLabels:
-    #     prometheus: somelabel
-
-    ## If true, a nil or {} value for prometheus.prometheusSpec.probeSelector will cause the
-    ## prometheus resource to be created with selectors based on values in the helm deployment,
-    ## which will also match the probes created
-    ##
     probeSelectorNilUsesHelmValues: false
-
-    ## Probes to be selected for target discovery.
-    ## If {}, select all Probes
-    ##
-    probeSelector: {}
-    ## Example which selects Probes with label "prometheus" set to "somelabel"
-    # probeSelector:
-    #   matchLabels:
-    #     prometheus: somelabel
-
-    ## If nil, select own namespace. Namespaces to be selected for Probe discovery.
-    probeNamespaceSelector: {}
-    ## Example which selects Probe in namespaces with label "prometheus" set to "somelabel"
-    # probeNamespaceSelector:
-    #   matchLabels:
-    #     prometheus: somelabel
-
-    ## If true, a nil or {} value for prometheus.prometheusSpec.scrapeConfigSelector will cause the
-    ## prometheus resource to be created with selectors based on values in the helm deployment,
-    ## which will also match the scrapeConfigs created
-    ##
     scrapeConfigSelectorNilUsesHelmValues: false
 
-    ## scrapeConfigs to be selected for target discovery.
-    ## If {}, select all scrapeConfigs
-    ##
-    scrapeConfigSelector: {}
-    ## Example which selects scrapeConfigs with label "prometheus" set to "somelabel"
-    # scrapeConfigSelector:
-    #   matchLabels:
-    #     prometheus: somelabel
-
-    ## If nil, select own namespace. Namespaces to be selected for scrapeConfig discovery.
-    scrapeConfigNamespaceSelector: {}
-    ## Example which selects scrapeConfig in namespaces with label "prometheus" set to "somelabel"
-    # scrapeConfigNamespaceSelector:
-    #   matchLabels:
-    #     prometheus: somelabel
-
-    ## How long to retain metrics
-    ##
     retention: 10d
 
-    ## Maximum size of metrics
-    ##
-    retentionSize: ""
-
-    ## Allow out-of-order/out-of-bounds samples ingested into Prometheus for a specified duration
-    ## See https://prometheus.io/docs/prometheus/latest/configuration/configuration/#tsdb
-    tsdb:
-      outOfOrderTimeWindow: 0s
-
-    ## Enable compression of the write-ahead log using Snappy.
-    ##
-    walCompression: true
-
-    ## If true, the Operator won't process any Prometheus configuration changes
-    ##
-    paused: false
-
-    ## Number of replicas of each shard to deploy for a Prometheus deployment.
-    ## Number of replicas multiplied by shards is the total number of Pods created.
-    ##
-    replicas: 1
-
-    ## EXPERIMENTAL: Number of shards to distribute targets onto.
-    ## Number of replicas multiplied by shards is the total number of Pods created.
-    ## Note that scaling down shards will not reshard data onto remaining instances, it must be manually moved.
-    ## Increasing shards will not reshard data either but it will continue to be available from the same instances.
-    ## To query globally use Thanos sidecar and Thanos querier or remote write data to a central location.
-    ## Sharding is done on the content of the `__address__` target meta-label.
-    ##
-    shards: 1
-
-    ## Log level for Prometheus be configured in
-    ##
     logLevel: info
+    logFormat: json
 
-    ## Log format for Prometheus be configured in
-    ##
-    logFormat: logfmt
+    remoteWriteDashboards: true
 
-    ## Prefix used to register routes, overriding externalUrl route.
-    ## Useful for proxies that rewrite URLs.
-    ##
-    routePrefix: /
-
-    ## Standard object's metadata. More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#metadata
-    ## Metadata Labels and Annotations gets propagated to the prometheus pods.
-    ##
-    podMetadata: {}
-    # labels:
-    #   app: prometheus
-    #   k8s-app: prometheus
-
-    ## Pod anti-affinity can prevent the scheduler from placing Prometheus replicas on the same node.
-    ## The default value "soft" means that the scheduler should *prefer* to not schedule two replica pods onto the same node but no guarantee is provided.
-    ## The value "hard" means that the scheduler is *required* to not schedule two replica pods onto the same node.
-    ## The value "" will disable pod anti-affinity so that no anti-affinity rules will be configured.
-    podAntiAffinity: ""
-
-    ## If anti-affinity is enabled sets the topologyKey to use for anti-affinity.
-    ## This can be changed to, for example, failure-domain.beta.kubernetes.io/zone
-    ##
-    podAntiAffinityTopologyKey: kubernetes.io/hostname
-
-    ## Assign custom affinity rules to the prometheus instance
-    ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
-    ##
-    affinity: {}
-    # nodeAffinity:
-    #   requiredDuringSchedulingIgnoredDuringExecution:
-    #     nodeSelectorTerms:
-    #     - matchExpressions:
-    #       - key: kubernetes.io/e2e-az-name
-    #         operator: In
-    #         values:
-    #         - e2e-az1
-    #         - e2e-az2
-
-    ## The remote_read spec configuration for Prometheus.
-    ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#remotereadspec
-    remoteRead: []
-    # - url: http://remote1/read
-    ## additionalRemoteRead is appended to remoteRead
-    additionalRemoteRead: []
-
-    ## The remote_write spec configuration for Prometheus.
-    ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#remotewritespec
-    remoteWrite: []
-    # - url: http://remote1/push
-    ## additionalRemoteWrite is appended to remoteWrite
-    additionalRemoteWrite: []
-
-    ## Enable/Disable Grafana dashboards provisioning for prometheus remote write feature
-    remoteWriteDashboards: false
-
-    ## Resource limits & requests
-    ##
     resources:
       limits: 
         memory: 2Gi
@@ -2629,9 +2399,6 @@ prometheus:
         memory: 1Gi
         cpu: 200m
 
-    ## Prometheus StorageSpec for persistent data
-    ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/storage.md
-    ##
     storageSpec:
       volumeClaimTemplate:
         spec:
@@ -2640,9 +2407,8 @@ prometheus:
             - ReadWriteOnce
           resources:
             requests:
-              storage: 20Gi  # Adjust the size according to your needs
+              storage: 20Gi
 
-    # Additional volumes on the output StatefulSet definition.
     volumes:
       - name: objstore-config
         secret:
@@ -2653,11 +2419,6 @@ prometheus:
 
     volumeMounts: []
 
-    ## Thanos configuration allows configuring various aspects of a Prometheus server in a Thanos environment.
-    ## This section is experimental, it may change significantly without deprecation notice in any release.
-    ## This is experimental and may change significantly without backward compatibility in any release.
-    ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#thanosspec
-    ##
     thanos:
       image: "bitnami/thanos:0.36.1-debian-12-r2"
       
@@ -2681,63 +2442,6 @@ prometheus:
       #   - name: s3-sse-c-key
       #     mountPath: /etc/secrets
 
-
-
-      # secretProviderClass:
-      #   provider: gcp
-      #   parameters:
-      #     secrets: |
-      #       - resourceName: "projects/$PROJECT_ID/secrets/testsecret/versions/latest"
-      #         fileName: "objstore.yaml"
-      ## ObjectStorageConfig configures object storage in Thanos.
-      # objectStorageConfig:
-      #   # use existing secret, if configured, objectStorageConfig.secret will not be used
-      #   existingSecret: {}
-      #     # name: ""
-      #     # key: ""
-      #   # will render objectStorageConfig secret data and configure it to be used by Thanos custom resource,
-      #   # ignored when prometheusspec.thanos.objectStorageConfig.existingSecret is set
-      #   # https://thanos.io/tip/thanos/storage.md/#s3
-      #   secret: {}
-      #     # type: S3
-      #     # config:
-      #     #   bucket: ""
-      #     #   endpoint: ""
-      #     #   region: ""
-      #     #   access_key: ""
-      #     #   secret_key: ""
-
-    ## Containers allows injecting additional containers. This is meant to allow adding an authentication proxy to a Prometheus pod.
-    ## if using proxy extraContainer update targetPort with proxy container port
-    containers: []
-    # containers:
-    # - name: oauth-proxy
-    #   image: quay.io/oauth2-proxy/oauth2-proxy:v7.5.1
-    #   args:
-    #   - --upstream=http://127.0.0.1:9090
-    #   - --http-address=0.0.0.0:8081
-    #   - --metrics-address=0.0.0.0:8082
-    #   - ...
-    #   ports:
-    #   - containerPort: 8081
-    #     name: oauth-proxy
-    #     protocol: TCP
-    #   - containerPort: 8082
-    #     name: oauth-metrics
-    #     protocol: TCP
-    #   resources: {}
-
-    ## InitContainers allows injecting additional initContainers. This is meant to allow doing some changes
-    ## (permissions, dir tree) on mounted volumes before starting prometheus
-    initContainers: []
-
-    ## PortName to use for Prometheus.
-    ##
-    portName: "http-web"
-
-    ## ArbitraryFSAccessThroughSMs configures whether configuration based on a service monitor can access arbitrary files
-    ## on the file system of the Prometheus container e.g. bearer token files.
-    arbitraryFSAccessThroughSMs: false
 
     ## OverrideHonorLabels if set to true overrides all user configured honor_labels. If HonorLabels is set in ServiceMonitor
     ## or PodMonitor to true, this overrides honor_labels to false.
