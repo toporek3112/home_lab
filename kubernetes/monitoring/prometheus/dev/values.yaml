@@ -2384,7 +2384,7 @@ prometheus:
     probeSelectorNilUsesHelmValues: false
     scrapeConfigSelectorNilUsesHelmValues: false
 
-    retention: 10d
+    retention: 2d
 
     logLevel: info
     logFormat: json
@@ -2431,8 +2431,6 @@ prometheus:
           value: "/prometheus/prometheus-db"
         - name: "objstore.config-file"
           value: "/conf/objstore.yml"
-        - name: "shipper.upload-compacted"
-          value: ""
         
       volumeMounts:
         - name: prometheus-prometheus-db
