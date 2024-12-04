@@ -2797,7 +2797,7 @@ prometheus:
       additionalArgs:
         - name: "objstore.config-file"
           value: "/conf/objstore.yml"
-        - name: "data-dir"
+        - name: "tsdb.path"
           value: "/prometheus"
         - name: "shipper.upload-compacted"
           value: ""
