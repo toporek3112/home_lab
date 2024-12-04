@@ -1,3 +1,54 @@
+terraform {
+  required_providers {
+    null = {
+      source  = "hashicorp/null"
+      version = "3.2.3"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "2.33.0"
+    }
+    http = {
+      source  = "hashicorp/http"
+      version = "3.4.5"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "2.16.1"
+    }
+    keepass = {
+      source  = "iSchluff/keepass"
+      version = "1.0.1"
+    }
+  }
+}
+
+##################################################
+################# SECRETS STORE ##################
+##################################################
+
+variable "KeyPass_Database" {
+  type      = string
+  sensitive = true
+}
+variable "KeyPass_Password" {
+  type      = string
+  sensitive = true
+}
+
+provider "keepass" {
+  database = var.KeyPass_Database
+  password = var.KeyPass_Password
+}
+
+module "secrets" {
+  source           = "./modules/secrets"
+}
+
+##################################################
+############ K8S WORKLOADS MANAGEMENT ############
+##################################################
+
 provider "kubernetes" {
   config_path = "./config/kubeconfig"
 }
@@ -16,10 +67,9 @@ locals {
 data "http" "prometheus_servicemonitor_crd" {
   url = "https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/tags/kube-prometheus-stack-66.1.1/charts/kube-prometheus-stack/charts/crds/crds/crd-servicemonitors.yaml"
 }
-
 # Apply the manifest in the Kubernetes cluster
 resource "kubernetes_manifest" "prometheus_servicemonitor_crd" {
-  manifest = yamldecode(data.http.prometheus_servicemonitor_crd.body)
+  manifest = yamldecode(data.http.prometheus_servicemonitor_crd.response_body)
 }
 
 resource "kubernetes_namespace" "argocd" {
@@ -41,9 +91,6 @@ module "argocd" {
   image_tag        = "0.0.7-arm64-2.13.0"
 }
 
-##################################################
-################ APPLICATIONSETS #################
-##################################################
 resource "kubernetes_manifest" "applicationset_home_lab" {
   depends_on = [ module.argocd ]
   manifest = {
