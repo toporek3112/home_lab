@@ -2424,7 +2424,7 @@ prometheus:
       
       logLevel: "debug"
       logFormat: "json"
-      readyTimeout: 30s
+      readyTimeout: 5m
       
       additionalArgs:
         - name: "tsdb.path"
