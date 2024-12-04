@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: thanos-bucketstore-ingress
+  namespace: monitoring
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`thanos-bucketstore.local`)
+      kind: Rule
+      services:
+        - name: thanos-bucketweb
+          port: 8080

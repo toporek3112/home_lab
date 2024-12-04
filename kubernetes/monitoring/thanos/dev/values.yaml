@@ -1,0 +1,154 @@
+global:
+  defaultStorageClass: ""
+  storageClass: ""
+
+nameOverride: "thanos"
+fullnameOverride: "thanos"
+
+image:
+  registry: docker.io
+  repository: bitnami/thanos
+  tag: 0.37.0-debian-12-r0
+  digest: "sha256:8bd91c759ed26981abfdfc113de45b443b528a7091a274fc92cfc7ba3b067712"
+  pullPolicy: IfNotPresent
+
+existingObjstoreSecret: "thanos-objstore-config"
+
+query:
+  enabled: true
+
+  logLevel: debug
+  logFormat: json
+  
+  replicaCount: 1
+
+  # resources:
+  #   requests:
+  #     cpu: 2
+  #     memory: 512Mi
+  #   limits:
+  #     cpu: 3
+  #     memory: 1024Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: "1"
+    maxReplicas: "3"
+    targetCPU: "80"
+    targetMemory: "80"
+    targetPodMetrics: []
+
+queryFrontend:
+  enabled: true
+
+  logLevel: info
+  logFormat: json
+
+  config: ""
+  existingConfigmap: ""
+  
+  replicaCount: 1
+  
+  # resources:
+  #   requests:
+  #     cpu: 2
+  #     memory: 512Mi
+  #   limits:
+  #     cpu: 3
+  #     memory: 1024Mi
+  
+  autoscaling:
+    enabled: true
+    minReplicas: "1"
+    maxReplicas: "3"
+    targetCPU: "80"
+    targetMemory: "80"
+
+bucketweb:
+  enabled: true
+
+  logLevel: info
+  logFormat: json
+
+  # resources:
+  #   requests:
+  #     cpu: 2
+  #     memory: 512Mi
+  #   limits:
+  #     cpu: 3
+  #     memory: 1024Mi
+
+  volumeMounts:
+    - name: thanos-gcp-sa
+      mountPath: /config/sa-key.json
+      subPath: sa-key.json
+      readOnly: true
+
+  volumes:
+    - name: thanos-gcp-sa
+      secret:
+        secretName: thanos-gcp-sa
+
+compactor:
+  enabled: true
+
+  logLevel: info
+  logFormat: json
+
+  persistence:
+    enable: false
+
+  retentionResolutionRaw: 30d
+  retentionResolution5m: 30d
+  retentionResolution1h: 10y
+
+  consistencyDelay: 30m
+
+  # resources:
+  #   requests:
+  #     cpu: 2
+  #     memory: 512Mi
+  #   limits:
+  #     cpu: 3
+  #     memory: 1024Mi
+
+storegateway:
+  enabled: true
+
+  logLevel: info
+  logFormat: json
+
+  replicaCount: 1
+
+  # resources:
+  #   requests:
+  #     cpu: 2
+  #     memory: 512Mi
+  #   limits:
+  #     cpu: 3
+  #     memory: 1024Mi
+
+  persistence:
+    enabled: false
+    storageClass: "exoscale-bs-retain"
+    size: 50Gi
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    namespace: "monitoring"
+    interval: "10s"
+    scrapeTimeout: "10s"
+    metricRelabelings: []
+    relabelings:
+      - action: replace
+        replacement: local
+        targetLabel: cluster
+  
+  prometheusRule:
+    enabled: false
+    default:
+      sidecarJobRegex: ".*thanos-sidecar.*"
+      create: false
+    namespace: "monitoring"
