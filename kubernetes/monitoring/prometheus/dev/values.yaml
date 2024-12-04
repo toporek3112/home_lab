@@ -2793,16 +2793,19 @@ prometheus:
       
       logLevel: "debug"
       logFormat: "json"
+      readyTimeout: 30s
       
       additionalArgs:
+        - name: "tsdb.path"
+          value: "/prometheus/prometheus-db"
         - name: "objstore.config-file"
           value: "/conf/objstore.yml"
-        - name: "tsdb.path"
-          value: "/prometheus"
         - name: "shipper.upload-compacted"
           value: ""
         
       volumeMounts:
+        - name: prometheus-prometheus-db-prometheus-prometheus-0
+          mountPath: /prometheus
         - name: objstore-config
           mountPath: /conf
       #   - name: s3-sse-c-key
