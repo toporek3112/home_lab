@@ -72,10 +72,27 @@ resource "kubernetes_manifest" "prometheus_servicemonitor_crd" {
   manifest = yamldecode(data.http.prometheus_servicemonitor_crd.response_body)
 }
 
+resource "kubernetes_namespace" "crossplane" {
+  metadata {
+    name = "crossplane-system"
+  }
+}
+
 resource "kubernetes_namespace" "argocd" {
   metadata {
     name = "argocd"
   }
+}
+
+module "crossplane" {
+  depends_on = [ kubernetes_namespace.crossplane, kubernetes_manifest.prometheus_servicemonitor_crd ]
+  source           = "./modules/crossplane"
+  namespace        = kubernetes_namespace.crossplane.id
+  chart            = "crossplane"
+  chart_version    = "1.18.1"
+  chart_repository = "https://charts.crossplane.io/stable"
+  image_repository = "xpkg.upbound.io/crossplane/crossplane"
+  image_tag        = ""
 }
 
 # https://github.com/bitnami/charts/tree/argo-cd/7.0.20/bitnami/argo-cd
@@ -85,10 +102,10 @@ module "argocd" {
   source           = "./modules/argocd"
   namespace        = kubernetes_namespace.argocd.id
   chart            = "argo-cd"
-  chart_version    = "7.7.0" # Update this to match the latest version of the native chart
+  chart_version    = "7.7.0"
   chart_repository = "https://argoproj.github.io/argo-helm"
   image_repository = "311200/argocd"
-  image_tag        = "0.0.7-arm64-2.13.0"
+  image_tag        = "0.0.9-arm64-2.13.0"
 }
 
 resource "kubernetes_manifest" "applicationset_home_lab" {

@@ -1,0 +1,81 @@
+replicas: 1
+
+image:
+  repository: ${image_repository}
+  tag: ${image_tag}
+  pullPolicy: IfNotPresent
+
+
+provider:
+  # -- A list of Provider packages to install.
+  packages: []
+
+configuration:
+  # -- A list of Configuration packages to install.
+  packages: []
+
+function:
+  # -- A list of Function packages to install
+  packages: []
+
+# -- The imagePullSecret names to add to the Crossplane ServiceAccount.
+imagePullSecrets: []
+
+registryCaBundleConfig:
+  # -- The ConfigMap name containing a custom CA bundle to enable fetching packages from registries with unknown or untrusted certificates.
+  name: ""
+  # -- The ConfigMap key containing a custom CA bundle to enable fetching packages from registries with unknown or untrusted certificates.
+  key: ""
+
+service:
+  # -- Configure annotations on the service object. Only enabled when webhooks.enabled = true
+  customAnnotations: {}
+
+rbacManager:
+  deploy: true
+  skipAggregatedClusterRoles: false
+  replicas: 1
+  revisionHistoryLimit: null
+  leaderElection: true
+  args: []
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpreadConstraints: []
+
+resourcesCrossplane:
+  limits:
+    cpu: 500m
+    memory: 1024Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+securityContextCrossplane:
+  runAsUser: 65532
+  runAsGroup: 65532
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+
+packageCache:
+  medium: ""
+  sizeLimit: 20Mi
+  pvc: ""
+  configMap: ""
+
+resourcesRBACManager:
+  limits:
+    cpu: 100m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+securityContextRBACManager:
+  runAsUser: 65532
+  runAsGroup: 65532
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+
+metrics:
+  enabled: true
