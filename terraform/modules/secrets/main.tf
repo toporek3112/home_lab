@@ -8,7 +8,7 @@ terraform {
 }
 
 data "keepass_entry" "objstore_yml" {
-  path = "MySecrets/TheLab/K8s/gcp_service_account-local-thanos-bucket-sse-kms"
+  path = "MySecrets/TheLab/K8s/thanos-objstore-config"
 }
 
 resource "kubernetes_secret" "objstore_yml" {
